@@ -1,0 +1,39 @@
+git pull origin
+//creating a branch
+git branch <Name>
+//switching branches
+git checkout <Name>
+
+// changes to be code
+// Write the code
+
+// after completing for that day
+git stash
+
+
+// after total completion of the branch
+git stash
+
+git checkout main
+git pull origin main
+git checkout <Name>
+git merge main
+git stash pop
+
+// commit the changes and push and merging with main
+
+git add .
+git commit -m "Message"
+git push origin <Name>
+
+
+//WEBSITE MERGE 
+//MERGE THE PULL REQUEST AND DELETE THE LOCAL AND REMOTE branches
+git checkout main
+git branch -D <Name>
+git pull origin main
+
+
+
+
+//CREATE NEW COMMITS
