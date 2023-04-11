@@ -1,0 +1,84 @@
+/* Search and Add Form */
+.search-and-add-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .search-and-add-form label {
+    display: none;
+  }
+  
+  .search-and-add-form input {
+    padding: 10px;
+    margin: 5px;
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    font-size: 16px;
+  }
+  
+  .search-and-add-form input[type="date"],
+  .search-and-add-form input[type="time"] {
+    padding: 10px;
+  }
+  
+  .search-and-add-form input::placeholder {
+    color: #999;
+  }
+  
+  .search-and-add-form button {
+    background-color: #3f51b5;
+    color: #fff;
+    padding: 10px 20px;
+    margin: 5px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  }
+  
+  .search-and-add-form button:hover {
+    background-color: #1a237e;
+  }
+  
+  .search-and-add-form .search-button,
+  .search-and-add-form .add-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-left: 5px;
+    cursor: pointer;
+  }
+  
+  .search-and-add-form .search-button:hover,
+  .search-and-add-form .add-button:hover {
+    color: #3f51b5;
+  }
+  
+  /* Table */
+  .table {
+    margin-top: 20px;
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .table th,
+  .table td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+  }
+  
+  .table th {
+    background-color: #f2f2f2;
+    font-weight: normal;
+  }
+  
+  .table td {
+    font-size: 16px;
+  }
