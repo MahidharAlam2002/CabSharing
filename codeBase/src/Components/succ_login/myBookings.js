@@ -1,5 +1,7 @@
-function myBooking() {
-    return (  <div>myBooking</div>);
+import NavBar from "./NavBar";
+
+function MyBooking() {
+    return (  <div><NavBar/>myBooking</div>);
 }
 
-export default myBooking;
+export default MyBooking;
