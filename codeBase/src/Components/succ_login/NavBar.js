@@ -16,7 +16,6 @@ function NavBar() {
           </Nav>
         </Container>
       </Navbar>
-      <br />
         </div>
 
      );
