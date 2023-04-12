@@ -74,7 +74,7 @@ function SearchAndAddForm() {
       </div>
 
       <div>
-        <TableUI />
+        <TableUI showStatus={true} showCount={true}/>
       </div>
     </div>
   );
