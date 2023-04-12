@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Table, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-function TableUI() {
+function TableUI(props) {
   const [data, setData] = useState([
     { scheduleid: 1, startplace: 'New York', endplace: 'Los Angeles', date: '2023-04-15', time: '12:00 PM', count: 4, status: 'Unjoin' },
     { scheduleid: 2, startplace: 'San Francisco', endplace: 'Seattle', date: '2023-04-16', time: '10:00 AM', count: 2, status: 'Unjoin' },
@@ -20,7 +20,8 @@ function TableUI() {
     }
     setData(newData);
   };
-
+  const showStatus=props.showStatus;
+  const showCount=props.showCount;
   return (
     <div className="container">
       
@@ -32,8 +33,8 @@ function TableUI() {
             <th>End Place</th>
             <th>Date</th>
             <th>Time</th>
-            <th>Count</th>
-            <th>Status</th>
+            {showCount &&<th>Count</th>}
+            {showStatus && <th>Status</th>}
           </tr>
         </thead>
         <tbody>
@@ -44,12 +45,11 @@ function TableUI() {
               <td>{row.endplace}</td>
               <td>{row.date}</td>
               <td>{row.time}</td>
-              <td>{row.count}</td>
-              <td>
-                <Button onClick={() => handleStatusClick(index)} variant={row.status === 'Unjoin' ? 'danger' : 'success'}>
-                  {row.status}
-                </Button>
-              </td>
+              {showCount && <td>{row.count}</td>}
+              {showStatus && <td><Button onClick={() => handleStatusClick(index)} variant={row.status === 'Unjoin' ? 'danger' : 'success'}>{row.status}</Button></td>}
+              
+              
+              
             </tr>
           ))}
         </tbody>

@@ -8,7 +8,7 @@ function Login() {
     
 
     return (
-    <div style={{alignItems: 'center', display: 'flex', backgroundImage:'url("https://lh3.googleusercontent.com/p/AF1QipMttxVTtnaZBUARGuyX6Tk6x6nCNbqng9VJyClc=s1360-w1360-h1020")'}}>
+    <div style={{alignItems: 'center', display: 'flex', backgroundImage:'url("https://lh3.googleusercontent.com/p/AF1QipMttxVTtnaZBUARGuyX6Tk6x6nCNbqng9VJyClc=s1360-w1360-h1020")',backgroundRepeat:'no-repeat',backgroundSize:'cover'}}>
 
         <Container style={{height: '100vh', paddingTop: '170px', width:'30%'}}>
             <Row style={{backgroundColor:'white',paddingTop:'30px'}}>
