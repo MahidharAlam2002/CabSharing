@@ -20,7 +20,15 @@ function Login() {
             </Row>
 
             <Row style={{paddingTop:"25px", backgroundColor:'white',paddingBottom:'20px'}}>
-                <Col style={{textAlign:'center'}}><Button variant="outline-primary">LogIn With IITH Gmail Account</Button></Col>
+                <Col style={{textAlign:'center'}}>
+                <form action='../../auth/google/home' method='post'>
+                <Button variant="outline-primary" type="submit">
+        Sign In With IITH Google Account
+      </Button>
+</form>
+
+
+                </Col>
             </Row>
         </Container>
     </div>
