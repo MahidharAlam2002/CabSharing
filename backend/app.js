@@ -25,11 +25,13 @@ const pool = mysql.createPool({
 
 // serialize and deserialize user information
 passport.serializeUser((user, done) => {
+  // console.log("serializeUser");
   done(null, user.google_id);
 });
 
 passport.deserializeUser((id, done) => {
-  pool.query('SELECT * FROM users WHERE id = ?', [id], (err, rows) => {
+  // console.log("deserializeUser");
+  pool.query('SELECT * FROM users WHERE google_id = ?', [id], (err, rows) => {
     done(err, rows[0]);
   });
 });
@@ -41,8 +43,10 @@ passport.use(new GoogleStrategy({
   scope: ['profile', 'email']
 },
 async (accessToken, refreshToken, profile, done) => {
-  const { id, displayName, email } = profile;
+  const { id, displayName, emails ,photos} = profile;
+  // console.log(profile);
   // check if the user already exists in the database
+  // console.log("googlestrategy");
   pool.query('SELECT * FROM users WHERE google_id = ?', [id], (err, rows) => {
     if (err) return done(err);
     if (rows.length) return done(null, rows[0]);
@@ -50,11 +54,16 @@ async (accessToken, refreshToken, profile, done) => {
     const newUser = {
       google_id: id,
       name: displayName,
-      email: email
+      email: emails[0].value,
+      photo:photos[0].value
     };
+    // console.log("newUserss",newUser);
+
     pool.query('INSERT INTO users SET ?', newUser, (err, res) => {
-      if (err) return done(err);
+      if (err) done(err);
       newUser.id = res.insertId;
+      // console.log("res",res);
+      // console.log("newUser",newUser);
       return done(null, newUser);
 
       // req.login(newUser, (err) => {
@@ -68,18 +77,22 @@ async (accessToken, refreshToken, profile, done) => {
 
 
 app.get('/', (req, res) => {
+  // console.log('app.get /');
   res.redirect("http://localhost:3000/");
 });
 
 app.get('/profile', (req, res) => {
   if (req.isAuthenticated()) {
+    // console.log('app.get /profile');
     res.redirect('http://localhost:3000/profile');
   } else {
+    // console.log('app.get /profile');
     res.redirect('http://localhost:3000');
   }
 });
 
 app.get('/home', (req, res) => {
+  // console.log('app.get /home');
   res.redirect('http://localhost:3000/home');
 });
 
@@ -89,11 +102,13 @@ app.get('/auth/google',
 app.get('/auth/google/home',
   passport.authenticate('google', { failureRedirect: '/' }),
   (req, res) => {
+    // console.log('app.get /auth/google/home passport.authenticate');
     res.redirect('http://localhost:3000/home');
   }
 );
 
 app.post("/auth/google/home", function(req, res){
+  // console.log("app.post('/auth/google/home')")
   res.redirect('http://localhost:8080/auth/google/home');
 });
 
