@@ -1,10 +1,21 @@
 const express = require('express');
+const bodyParser = require("body-parser");
 const mysql = require('mysql');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 var session = require('express-session');
+const cors=require("cors");
+const corsOptions ={
+   origin:'*', 
+   credentials:true,            //access-control-allow-credentials:true
+   optionSuccessStatus:200,
+};
 
 const app = express();
+
+app.use(cors(corsOptions)); // Use this after the variable declaration
+
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(session({
   secret: "Our little secret",
@@ -93,24 +104,41 @@ app.get('/profile', (req, res) => {
 
 app.get('/home', (req, res) => {
   // console.log('app.get /home');
+  console.log('from nodejs 96 :'+req.user);
   res.redirect('http://localhost:3000/home');
 });
+
+app.get('/user', (req, res) => {
+  // console.log('app.get /home');
+  console.log('from nodejs 105 :'+JSON.stringify(req.user));
+  // console.log('res from 114, 115 :');
+  // console.log(res);
+  res.redirect('http://localhost:3000/home');
+});
+
+// app.get('/userData', (req, res) => {
+//   // console.log('app.get /home');
+//   console.log('from nodejs 121 :'+JSON.stringify(req.user));
+//   res.send(JSON.stringify(req.user));
+// });
 
 app.get('/auth/google',
   passport.authenticate('google', { scope: ['profile','email'] }));
 
 app.get('/auth/google/home',
   passport.authenticate('google', { failureRedirect: '/' }),
-  (req, res) => {
+  function (req, res){
     // console.log('app.get /auth/google/home passport.authenticate');
+    console.log('req.user 132 :'+JSON.stringify(req.user));
     res.redirect('http://localhost:3000/home');
   }
 );
 
-app.post("/auth/google/home", function(req, res){
-  // console.log("app.post('/auth/google/home')")
-  res.redirect('http://localhost:8080/auth/google/home');
-});
+// app.post("/auth/google/home", function(req, res){
+//   // console.log("app.post('/auth/google/home')")
+//   console.log('req.user 117 :'+req.user);
+//   res.redirect('http://localhost:8080/auth/google/home');
+// });
 
 app.listen(8080, () => {
   console.log('Server started on port 8080');

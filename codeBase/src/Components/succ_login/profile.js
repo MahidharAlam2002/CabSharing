@@ -1,7 +1,7 @@
 import NavBar from "./NavBar";
 import React from 'react';
 import { MDBCol, MDBContainer, MDBRow, MDBCard, MDBCardText, MDBCardBody, MDBCardImage, MDBTypography, MDBIcon } from 'mdb-react-ui-kit';
-
+import Button from 'react-bootstrap/Button';
 // function Profile() {
 //     return (  <div><NavBar/>My Profile</div>);
 // }
@@ -66,7 +66,15 @@ export default function Profile() {
           </MDBCol>
         </MDBRow>
       </MDBContainer>
+      <MDBTypography  className="pt-5 text-center" tag='h2' >
+      <Button variant="danger" type="submit" href='/' onClick={function (){
+                    sessionStorage.removeItem('sometoken');
+                }}>
+        LOG OUT
+      </Button>
+      </MDBTypography>
     </section>
+
     </div>
   );
 }
