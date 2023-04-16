@@ -12,7 +12,7 @@ const corsOptions ={
 };
 
 const app = express();
-
+const profileRoutes=require('./profile')
 app.use(cors(corsOptions)); // Use this after the variable declaration
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -133,13 +133,20 @@ app.get('/auth/google/home',
     res.redirect('http://localhost:3000/home');
   }
 );
-
+app.get('/api/authenticate',(req,res)=>{
+  res.send(req.user);
+})
+app.get('/logout',(req,res)=>{
+  req.logout((err)=>{
+    res.redirect('http://localhost:3000/');
+  })
+})
 // app.post("/auth/google/home", function(req, res){
 //   // console.log("app.post('/auth/google/home')")
 //   console.log('req.user 117 :'+req.user);
 //   res.redirect('http://localhost:8080/auth/google/home');
 // });
-
+app.use(profileRoutes)
 app.listen(8080, () => {
   console.log('Server started on port 8080');
 });
