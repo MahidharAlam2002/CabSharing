@@ -21,11 +21,13 @@ function Login() {
 
             <Row style={{paddingTop:"25px", backgroundColor:'white',paddingBottom:'20px'}}>
                 <Col style={{textAlign:'center'}}>
-                <form action='../../auth/google/home' method='post'>
-                <Button variant="outline-primary" type="submit">
+                {/* <form action='../../auth/google/home' method='post'> */}
+                <Button variant="outline-primary" type="submit" href='http://localhost:8080/auth/google/home' onClick={function (){
+                    sessionStorage.setItem('sometoken','loggedin');
+                }}>
         Sign In With IITH Google Account
       </Button>
-</form>
+{/* </form> */}
 
 
                 </Col>
