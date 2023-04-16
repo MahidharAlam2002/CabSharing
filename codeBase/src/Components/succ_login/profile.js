@@ -6,7 +6,7 @@ import Button from 'react-bootstrap/Button';
 //     return (  <div><NavBar/>My Profile</div>);
 // }
 // export default Profile;
-
+import axios from 'axios';
 
 export default function Profile() {
   return (
@@ -69,6 +69,7 @@ export default function Profile() {
       <MDBTypography  className="pt-5 text-center" tag='h2' >
       <Button variant="danger" type="submit" href='/' onClick={function (){
                     sessionStorage.removeItem('sometoken');
+                    axios.get('/logout');
                 }}>
         LOG OUT
       </Button>
