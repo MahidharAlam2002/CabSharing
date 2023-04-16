@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
+import React, {useState } from 'react';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { IoIosAddCircle } from 'react-icons/io';
 import TableUI from './Table';
+import "react-dropdown/style.css";
+// import Select from "react-select";
+import Dropdown from './Dropdown';
+
 
 function SearchAndAddForm() {
   const [formData, setFormData] = useState({
@@ -25,28 +29,38 @@ function SearchAndAddForm() {
     // Call the add function with formData values
   };
 
+  // const [selectedOptions, setSelectedOptions] = useState();
+  // function handleSelect(data) {
+  //   setSelectedOptions(data);
+  // }
+
+
+  const options = [
+    { value: "IIT Hyderabad", label: "IIT Hyderabad" },
+    { value: "Secunderabad Railway Station", label: "Secunderabad Railway Station" },
+    { value: "Rajiv Gandhi International Airport", label: "Rajiv Gandhi International Airport" },
+    { value: "Miyapur", label: "Miyapur" },
+    { value: "JBS Bus Stand", label: "JBS Bus Stand" }
+  ];
+
   return (
-    <div >
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center',marginRight: 100  }}>
+    <div>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center', marginRight: 100 }}>
         <AiOutlineSearch onClick={handleSearch} size={32} style={{ marginRight: 8, cursor: 'pointer' }} />
-        <input
-          type="text"
-          id="startPlace"
-          name="startPlace"
-          placeholder="Start Place"
-          value={formData.startPlace}
-          onChange={handleInputChange}
-          style={{ padding: '10px 16px', borderRadius: 8, outline: 'none', border: 'none', marginRight: 8, width: 200 }}
+        <Dropdown
+          isSearchable={true}
+          isMulti={true}
+          placeHolder="Start Place"
+          options={options}
+          onChange={(value) => console.log(value)}
         />
 
-        <input
-          type="text"
-          id="endPlace"
-          name="endPlace"
-          placeholder="End Place"
-          value={formData.endPlace}
-          onChange={handleInputChange}
-          style={{ padding: '10px 16px', borderRadius: 8, outline: 'none', border: 'none', marginRight: 8, width: 200 }}
+        <Dropdown
+          isSearchable={true}
+          isMulti={true}
+          placeHolder="End Place"
+          options={options}
+          onChange={(value) => console.log(value)}
         />
 
         <input
@@ -69,12 +83,10 @@ function SearchAndAddForm() {
           style={{ padding: '10px 16px', borderRadius: 8, outline: 'none', border: 'none', marginRight: 8, width: 150 }}
         />
 
-        <IoIosAddCircle onClick={handleAdd} size={32} style={{ cursor: 'pointer' }} />
-        {/* <button onClick={handleAdd}>Add</button> */}
-      </div>
-
-      <div>
-        <TableUI showStatus={true} showCount={true}/>
+      <IoIosAddCircle onClick={handleAdd} size={32} style={{ cursor: 'pointer' }} />
+      {/* <button onClick={handleAdd}>Add</button> */}
+    </div><div>
+        <TableUI showStatus={true} showCount={true} />
       </div>
     </div>
   );
