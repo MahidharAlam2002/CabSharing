@@ -51,6 +51,7 @@ function SearchAndAddForm() {
           isSearchable={true}
           isMulti={true}
           placeHolder="Start Place"
+          value={formData.startPlace}
           options={options}
           onChange={(value) => console.log(value)}
         />
