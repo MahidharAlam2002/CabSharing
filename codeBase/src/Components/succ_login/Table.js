@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Table, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./Dialoguebox.css";
-
+import axios from 'axios';
 function TableUI(props) {
   const [data, setData] = useState([
-    { scheduleid: 1, startplace: 'New York', endplace: 'Los Angeles', date: '2023-04-15', time: '12:00 PM', listOfPassengers:[] ,status: 'Join' },
-    { scheduleid: 2, startplace: 'San Francisco', endplace: 'Seattle', date: '2023-04-16', time: '10:00 AM', listOfPassengers:[{SNo:1, Name:"Ram Charan2",PhNo: "0000000001"}, {SNo:2, Name:"NTR",PhNo: "0000000002"}] , status: 'Join' },
-    { scheduleid: 3, startplace: 'Chicago', endplace: 'Houston', date: '2023-04-17', time: '1:00 PM', listOfPassengers:[{SNo:1, Name:"Ram Charan3",PhNo: "0000000001"}, {SNo:2, Name:"NTR",PhNo: "0000000002"}, {SNo:3, Name:"Allu Arjun",PhNo: "0000000003"}] , status: 'Join' },
+    // { scheduleid: 1, startplace: 'New York', endplace: 'Los Angeles', date: '2023-04-15', time: '12:00 PM', listOfPassengers:[] ,status: 'Join' },
+    // { scheduleid: 2, startplace: 'San Francisco', endplace: 'Seattle', date: '2023-04-16', time: '10:00 AM', listOfPassengers:[{SNo:1, Name:"Ram Charan2",PhNo: "0000000001"}, {SNo:2, Name:"NTR",PhNo: "0000000002"}] , status: 'Join' },
+    // { scheduleid: 3, startplace: 'Chicago', endplace: 'Houston', date: '2023-04-17', time: '1:00 PM', listOfPassengers:[{SNo:1, Name:"Ram Charan3",PhNo: "0000000001"}, {SNo:2, Name:"NTR",PhNo: "0000000002"}, {SNo:3, Name:"Allu Arjun",PhNo: "0000000003"}] , status: 'Join' },
   ]);
 
   const profileDetails={name: 'Balayya1', email:'abc@def.com', phonenumber: '1234567890', startplace: 'IIT Hyderabad', endplace: 'Miyapur', date: '2023-04-15', time: '12:00 PM'};
@@ -15,12 +15,12 @@ function TableUI(props) {
   const handleStatusClick = (index) => {
     document.getElementById(index+"dialogdiv").style.display="block";
   };
-
+  const presentlist=[[{SNo:1, Name:"Ram Charan2",PhNo: "0000000001"}],[{SNo:1, Name:"Ram Charan2",PhNo: "0000000001"}],[{SNo:1, Name:"Ram Charan2",PhNo: "0000000001"}],[{SNo:1, Name:"Ram Charan2",PhNo: "0000000001"}],[{SNo:1, Name:"Ram Charan2",PhNo: "0000000001"}],[{SNo:1, Name:"Ram Charan2",PhNo: "0000000001"}]];
   const displayPassengers=(displayTableIndex)=>{
     if(document.getElementById(displayTableIndex).style.display==="none")
     {
       document.getElementById(displayTableIndex).style.display="block";
-      document.getElementById(displayTableIndex).dataset.myObject=data[displayTableIndex].listOfPassengers;
+      document.getElementById(displayTableIndex).dataset.myObject=[{SNo:1, Name:"Ram Charan2",PhNo: "0000000001"}];
     }
     else
       document.getElementById(displayTableIndex).style.display="none";
@@ -30,15 +30,21 @@ function TableUI(props) {
     document.getElementById(index+"dialogdiv").style.display="none";
   };
 
-  const confirmButton=(status, index)=>{
+  const confirmButton=async(status, index)=>{
     const newData=[...data];
     if(status==="Join")
     {
       /*  code to merge the join request */
+      const res=await axios.get('/join',{params:{
+        schedule_id:newData[index].schedule_id
+      }})
       data[index].status="Unjoin";
     }
     else
     {
+      const res=await axios.get('/unjoin',{params:{
+        schedule_id:newData[index].schedule_id
+      }})
       /*  code to demerge the join request */
       data[index].status="Join";
     }
@@ -46,7 +52,11 @@ function TableUI(props) {
     document.getElementById(index+"dialogdiv").style.display="none";
     
   };
-
+  useEffect(()=>{
+    console.log("data came here",props.data);
+    if(props.data)
+      setData(props.data)
+  },[props.data])
   const showStatus=props.showStatus;
   const showCount=props.showCount;
   return (
@@ -66,13 +76,13 @@ function TableUI(props) {
         </thead>
         <tbody>
           {data.map((row, index) => (
-            <tr key={row.scheduleid}>
-              <td>{row.scheduleid}</td>
-              <td>{row.startplace}</td>
-              <td>{row.endplace}</td>
+            <tr key={row.schedule_id}>
+              <td>{row.schedule_id}</td>
+              <td>{row.start_place}</td>
+              <td>{row.end_place}</td>
               <td>{row.date}</td>
               <td>{row.time}</td>
-              {showCount && <td>{Object.keys(row.listOfPassengers).length} 
+              {showCount && <td>{Object.keys(presentlist[index]).length} 
                 <Button onClick={()=>displayPassengers(index)}>{"view"}</Button>
 
                 <div className='container' >
@@ -85,7 +95,7 @@ function TableUI(props) {
                       </tr>
                     </thead>
                     <tbody>
-                      {row.listOfPassengers.map(passenger=>(
+                      {presentlist[index].map(passenger=>(
                         <tr key={passenger.SNo}>
                           <td>{passenger.SNo}</td>
                           <td>{passenger.Name}</td>

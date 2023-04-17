@@ -1,11 +1,11 @@
-import React, {useState } from 'react';
+import React, {useState,useEffect } from 'react';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { IoIosAddCircle } from 'react-icons/io';
 import TableUI from './Table';
 import "react-dropdown/style.css";
 // import Select from "react-select";
 import Dropdown from './Dropdown';
-
+import axios from'axios'
 
 function SearchAndAddForm() {
   const [formData, setFormData] = useState({
@@ -14,15 +14,18 @@ function SearchAndAddForm() {
     date: '',
     time: ''
   });
-
+  const [response,setresponse]=useState(null);
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     // Call the search function with formData values
     console.log(formData)
+    const res=await axios.get('/search',{params:formData});
+    console.log(res.data);
+    setresponse(res.data);
   };
 
   const handleAdd = () => {
@@ -34,7 +37,9 @@ function SearchAndAddForm() {
   //   setSelectedOptions(data);
   // }
 
-
+  useEffect(()=>{
+    handleSearch();
+  },[])
   const options = [
     { value: "IIT Hyderabad", label: "IIT Hyderabad" },
     { value: "Secunderabad Railway Station", label: "Secunderabad Railway Station" },
@@ -87,7 +92,7 @@ function SearchAndAddForm() {
       <IoIosAddCircle onClick={handleAdd} size={32} style={{ cursor: 'pointer' }} />
       {/* <button onClick={handleAdd}>Add</button> */}
     </div><div>
-        <TableUI showStatus={true} showCount={true} />
+        <TableUI showStatus={true} showCount={true} data={response}/>
       </div>
     </div>
   );
