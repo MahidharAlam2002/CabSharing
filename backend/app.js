@@ -13,6 +13,7 @@ const corsOptions ={
 
 const app = express();
 const profileRoutes=require('./profile')
+const searchRoutes=require('./search')
 app.use(cors(corsOptions)); // Use this after the variable declaration
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -146,7 +147,183 @@ app.get('/logout',(req,res)=>{
 //   console.log('req.user 117 :'+req.user);
 //   res.redirect('http://localhost:8080/auth/google/home');
 // });
+app.get('/search', (req, res) => {
+  // handle GET request for /users endpoint
+
+  //working start
+  console.log("search",req.query)
+//   const startPlace = req.query.startPlace|| null;
+  
+//   const endPlace = req.query.endPlace || null;
+//   const searchDate = req.query.date || null;
+//   const searchTime =  req.query.time || null;
+//   console.log(searchDate);
+  
+//   let datePlaceholder = searchDate ? '?' : 'CURDATE()';
+  
+//   const sqlQuery = `
+//   SELECT schedule_id,start_place,end_place,date,time
+//   FROM schedules
+//   WHERE (${startPlace ? 'start_place IN (?)' : 'TRUE'} )
+//   AND (${endPlace ? 'end_place IN (?)' : 'TRUE'})
+//   ORDER BY 
+//     CASE 
+//       WHEN date IS NULL AND time IS NULL THEN 1
+//       WHEN date IS NULL THEN ABS(TIMEDIFF(time, ?))
+//       WHEN time IS NULL THEN ABS(DATEDIFF(CURDATE(), '${datePlaceholder}'))
+//       ELSE  ABS(DATEDIFF('${datePlaceholder}', date)) + ABS(TIMEDIFF(time, ?))
+//     END ASC
+// `;
+  
+//   let queryParams = [startPlace, endPlace, searchTime, searchTime];
+  
+//   if (searchDate) {
+//     queryParams.splice(1, 0, searchDate);
+//     queryParams.splice(3, 0, searchDate);
+//   }
+  
+//   pool.query(sqlQuery, queryParams, (err, results) => {
+//     if (err) {
+//       console.error(err);
+//       res.send(err)
+//       return;
+//     }
+//     console.log(results);
+//     res.send(results);
+//   });
+
+//working end
+
+const startPlace = req.query.startPlace || null;
+const endPlace = req.query.endPlace || null;
+const searchDate = req.query.date || null;
+const searchTime = req.query.time || null;
+console.log(searchDate);
+
+let datePlaceholder = searchDate ? '?' : 'CURDATE()';
+
+const sqlQuery = `
+  SELECT schedules.schedule_id, schedules.start_place, schedules.end_place, schedules.date, schedules.time, IF(merge.schedule_id IS NOT NULL, 'Unjoin', 'Join') AS status
+  FROM schedules
+  LEFT JOIN merge ON schedules.schedule_id = merge.schedule_id AND merge.google_id = ?
+  WHERE (${startPlace ? 'start_place IN (?)' : 'TRUE'})
+  AND (${endPlace ? 'end_place IN (?)' : 'TRUE'})
+  ORDER BY 
+    CASE 
+      WHEN date IS NULL AND time IS NULL THEN 1
+      WHEN date IS NULL THEN ABS(TIMEDIFF(time, ?))
+      WHEN time IS NULL THEN ABS(DATEDIFF(CURDATE(), '${datePlaceholder}'))
+      ELSE  ABS(DATEDIFF('${datePlaceholder}', date)) + ABS(TIMEDIFF(time, ?))
+    END ASC
+`;
+// console.log(req.user)
+let queryParams = [req.user.google_id, startPlace, endPlace, searchTime, searchTime];
+
+if (searchDate) {
+  queryParams.splice(2, 0, searchDate);
+  queryParams.splice(4, 0, searchDate);
+}
+
+pool.query(sqlQuery, queryParams, (err, results) => {
+  if (err) {
+    console.error(err);
+    res.send(err)
+    return;
+  }
+  console.log(results);
+  res.send(results);
+});
+
+
+  //old
+  // pool.query(
+  //   'SELECT * FROM schedules WHERE (start_place IN (?) OR start_place IS NULL) AND (end_place IN (?)  OR end_place IS NULL) ORDER BY CASE  WHEN date IS NULL AND time IS NULL THEN 1 WHEN date IS NULL THEN ABS(TIMEDIFF(time, ?)) WHEN time IS NULL THEN ABS(DATEDIFF(date, ?)) ELSE  ABS(DATEDIFF(date, ?)) + ABS(TIMEDIFF(time,?)) END ASC;',
+  //   [req.query.startPlace, req.query.endPlace, req.query.date, req.query.time, req.query.date, req.query.time],
+  //   (error, results, fields) => {
+  //     if (error) {
+  //       console.error(error);
+  //       // Handle the error appropriately
+  //     } else {
+  //       console.log(results,fields);
+  //       // Do something with the results
+  //     }
+  //   }
+  // ); 
+
+  
+  // res.send(req.status);
+});
+
+app.get('/mybooking',(req,res)=>{
+  const sqlQuery = `
+  SELECT s.schedule_id,s.start_place,s.end_place,s.date,s.time
+  FROM schedules as s inner join merge as m on m.schedule_id=s.schedule_id and m.google_id=?`;
+  queryParams=[req.user.google_id];
+  pool.query(sqlQuery, queryParams, (err, results) => {
+    if (err) {
+      console.error(err);
+      res.send(err)
+      return;
+    }
+    console.log(results);
+    res.send(results);
+  });
+})
+app.get('/join',(req,res)=>{
+  const sqlQuery=`insert into merge values(?,?)
+  `
+  queryParams=[req.user.google_id,req.query.schedule_id];
+  pool.query(sqlQuery, queryParams, (err, results) => {
+    if (err) {
+      console.error(err);
+      res.send(err)
+      return;
+    }
+    console.log(results);
+    res.send(results);
+  });
+})
+app.get('/unjoin',(req,res)=>{
+  const sqlQuery=`delete from merge where google_id=? and schedule_id =?`
+  queryParams=[req.user.google_id,req.query.schedule_id];
+  pool.query(sqlQuery, queryParams, (err, results) => {
+    if (err) {
+      console.error(err);
+      res.send(err)
+      return;
+    }
+    console.log(results);
+    res.send(results);
+  });
+
+})
+app.get('/createschedule',(req,res)=>{
+  const sqlQuery1=`insert into schedules values(?,?,?,?,?)`;
+  const sqlQuery2=`insert into merge values(?,?)`;
+  queryParams1=[req.query.schedule_id,req.query.start_place,req.query.end_place,req.query.date,req.query.time];
+  queryParams2=[req.user.google_id,req.query.schedule_id];
+  pool.query(sqlQuery1, queryParams1, (err, results) => {
+    if (err) {
+      console.error(err);
+      res.send(err)
+      return;
+    }
+    console.log(results);
+    // res.send(results);
+  });
+  pool.query(sqlQuery2, queryParams2, (err, results) => {
+    if (err) {
+      console.error(err);
+      res.send(err)
+      return;
+    }
+    console.log(results);
+    res.send(results);
+  });
+})
+module.exports = pool;
 app.use(profileRoutes)
+app.use(searchRoutes)
 app.listen(8080, () => {
   console.log('Server started on port 8080');
 });
