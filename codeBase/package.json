@@ -16,20 +16,13 @@
     "react": "^18.2.0",
     "react-bootstrap": "^2.7.2",
     "react-dom": "^18.2.0",
-<<<<<<< Updated upstream
-=======
     "react-dropdown": "^1.11.0",
->>>>>>> Stashed changes
     "react-fontawesome": "^1.7.1",
     "react-icons": "^4.8.0",
     "react-image": "^4.1.0",
     "react-router-dom": "^6.10.0",
-<<<<<<< Updated upstream
-    "react-scripts": "^5.0.1",
-=======
     "react-scripts": "5.0.1",
     "react-select": "^5.7.2",
->>>>>>> Stashed changes
     "web-vitals": "^2.1.4",
     "webpack": "^5.78.0"
   },
