@@ -202,20 +202,48 @@ console.log(searchDate);
 
 let datePlaceholder = searchDate ? '?' : 'CURDATE()';
 
-const sqlQuery = `
-  SELECT schedules.schedule_id, schedules.start_place, schedules.end_place, schedules.date, schedules.time, IF(merge.schedule_id IS NOT NULL, 'Unjoin', 'Join') AS status
-  FROM schedules
-  LEFT JOIN merge ON schedules.schedule_id = merge.schedule_id AND merge.google_id = ?
-  WHERE (${startPlace ? 'start_place IN (?)' : 'TRUE'})
-  AND (${endPlace ? 'end_place IN (?)' : 'TRUE'})
-  ORDER BY 
-    CASE 
-      WHEN date IS NULL AND time IS NULL THEN 1
-      WHEN date IS NULL THEN ABS(TIMEDIFF(time, ?))
-      WHEN time IS NULL THEN ABS(DATEDIFF(CURDATE(), '${datePlaceholder}'))
-      ELSE  ABS(DATEDIFF('${datePlaceholder}', date)) + ABS(TIMEDIFF(time, ?))
-    END ASC
-`;
+// const sqlQuery = `
+//   SELECT schedules.schedule_id, schedules.start_place, schedules.end_place, schedules.date, schedules.time, IF(merge.schedule_id IS NOT NULL, 'Unjoin', 'Join') AS status
+//   FROM schedules
+//   LEFT JOIN merge ON schedules.schedule_id = merge.schedule_id AND merge.google_id = ?
+//   WHERE (${startPlace ? 'start_place IN (?)' : 'TRUE'})
+//   AND (${endPlace ? 'end_place IN (?)' : 'TRUE'})
+//   ORDER BY 
+//     CASE 
+//       WHEN date IS NULL AND time IS NULL THEN 1
+//       WHEN date IS NULL THEN ABS(TIMEDIFF(time, ?))
+//       WHEN time IS NULL THEN ABS(DATEDIFF(CURDATE(), '${datePlaceholder}'))
+//       ELSE  ABS(DATEDIFF('${datePlaceholder}', date)) + ABS(TIMEDIFF(time, ?))
+//     END ASC
+// `;
+const sqlQuery=`
+SELECT schedules.schedule_id, schedules.start_place, schedules.end_place, schedules.date, schedules.time, IF(merge.schedule_id IS NOT NULL, 'Unjoin', 'Join') AS status,
+JSON_ARRAYAGG(
+  CASE 
+    WHEN users.name IS NOT NULL THEN 
+      JSON_OBJECT(
+        'name', users.name,
+        'phone_number', users.phone
+      )
+    ELSE 
+       JSON_ARRAY()
+  END
+) AS listofpassengers
+FROM schedules
+LEFT JOIN merge ON schedules.schedule_id = merge.schedule_id AND merge.google_id = ?
+LEFT JOIN merge as m2 ON schedules.schedule_id = m2.schedule_id
+LEFT JOIN users ON m2.google_id = users.google_id
+WHERE (${startPlace ? 'start_place IN (?)' : 'TRUE'})
+AND (${endPlace ? 'end_place IN (?)' : 'TRUE'})
+GROUP BY schedules.schedule_id
+ORDER BY 
+  CASE 
+    WHEN date IS NULL AND time IS NULL THEN 1
+    WHEN date IS NULL THEN ABS(TIMEDIFF(time, ?))
+    WHEN time IS NULL THEN ABS(DATEDIFF(CURDATE(), '${datePlaceholder}'))
+    ELSE  ABS(DATEDIFF('${datePlaceholder}', date)) + ABS(TIMEDIFF(time, ?))
+  END ASC
+`
 // console.log(req.user)
 let queryParams = [req.user.google_id, startPlace, endPlace, searchTime, searchTime];
 
@@ -300,8 +328,16 @@ app.get('/unjoin',(req,res)=>{
 app.get('/createschedule',(req,res)=>{
   const sqlQuery1=`insert into schedules values(?,?,?,?,?)`;
   const sqlQuery2=`insert into merge values(?,?)`;
-  queryParams1=[req.query.schedule_id,req.query.start_place,req.query.end_place,req.query.date,req.query.time];
-  queryParams2=[req.user.google_id,req.query.schedule_id];
+  console.log('create',req.query);
+  scheduleid=req.user.google_id;
+  scheduleid+='_';
+  scheduleid+=req.query.date;
+  scheduleid+=req.query.time;
+  const myDate = new Date(req.query.date);
+  const myDateTime = myDate.toISOString().slice(0, 19).replace('T', ' ');
+
+  queryParams1=[scheduleid,req.query.startPlace,req.query.endPlace,myDateTime ,req.query.time];
+  queryParams2=[req.user.google_id,scheduleid];
   pool.query(sqlQuery1, queryParams1, (err, results) => {
     if (err) {
       console.error(err);
@@ -311,6 +347,15 @@ app.get('/createschedule',(req,res)=>{
     console.log(results);
     // res.send(results);
   });
+  
+})
+app.get('/createschedule2',(req,res)=>{
+  const sqlQuery2=`insert into merge values(?,?)`;
+  scheduleid=req.user.google_id;
+  scheduleid+='_';
+  scheduleid+=req.query.date;
+  scheduleid+=req.query.time;
+  queryParams2=[req.user.google_id,scheduleid];
   pool.query(sqlQuery2, queryParams2, (err, results) => {
     if (err) {
       console.error(err);
