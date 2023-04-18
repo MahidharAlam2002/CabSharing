@@ -11,7 +11,7 @@ function TableUI(props) {
   ]);
 
   const profileDetails={name: 'Balayya1', email:'abc@def.com', phonenumber: '1234567890', startplace: 'IIT Hyderabad', endplace: 'Miyapur', date: '2023-04-15', time: '12:00 PM'};
-
+  const [rerender,setrerender]=useState(false);
   const handleStatusClick = (index) => {
     document.getElementById(index+"dialogdiv").style.display="block";
   };
@@ -38,6 +38,8 @@ function TableUI(props) {
       const res=await axios.get('/join',{params:{
         schedule_id:newData[index].schedule_id
       }})
+      setrerender(true);
+      props.handleSearch();
       data[index].status="Unjoin";
     }
     else
@@ -46,6 +48,8 @@ function TableUI(props) {
         schedule_id:newData[index].schedule_id
       }})
       /*  code to demerge the join request */
+      props.handleSearch();
+      setrerender(true);
       data[index].status="Join";
     }
     setData(newData);
@@ -54,9 +58,10 @@ function TableUI(props) {
   };
   useEffect(()=>{
     console.log("data came here",props.data);
+    
     if(props.data)
       setData(props.data)
-  },[props.data])
+  },[props.data,rerender])
   const showStatus=props.showStatus;
   const showCount=props.showCount;
   return (
@@ -82,7 +87,7 @@ function TableUI(props) {
               <td>{row.end_place}</td>
               <td>{row.date}</td>
               <td>{row.time}</td>
-              {showCount && <td>{Object.keys(presentlist[index]).length} 
+              {showCount && <td>{Object.keys(JSON.parse(row.listofpassengers)).filter(item => !Array.isArray(item) || item.length !== 0).length} 
                 <Button onClick={()=>displayPassengers(index)}>{"view"}</Button>
 
                 <div className='container' >
@@ -95,11 +100,12 @@ function TableUI(props) {
                       </tr>
                     </thead>
                     <tbody>
-                      {presentlist[index].map(passenger=>(
-                        <tr key={passenger.SNo}>
-                          <td>{passenger.SNo}</td>
-                          <td>{passenger.Name}</td>
-                          <td>{passenger.PhNo}</td>
+                      {JSON.parse(row.listofpassengers).filter(item => !Array.isArray(item) || item.length !== 0).map((passenger,index)=>(
+                        
+                        <tr key={index+1}>
+                          <td>{index+1}</td>
+                          <td>{passenger.name}</td>
+                          <td>{passenger.phone_number}</td>
                         </tr>
                       ))}
                     </tbody>
