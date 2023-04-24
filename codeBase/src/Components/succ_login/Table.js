@@ -3,6 +3,8 @@ import { Table, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./Dialoguebox.css";
 import axios from 'axios';
+import moment from 'moment-timezone';
+import TableTest from './Tabletest';
 function TableUI(props) {
   const [data, setData] = useState([
     // { scheduleid: 1, startplace: 'New York', endplace: 'Los Angeles', date: '2023-04-15', time: '12:00 PM', listOfPassengers:[] ,status: 'Join' },
@@ -58,17 +60,19 @@ function TableUI(props) {
   };
   useEffect(()=>{
     console.log("data came here",props.data);
+   
     
     if(props.data)
-      setData(props.data)
+     { 
+      setData(props.data)}
   },[props.data,rerender])
   const showStatus=props.showStatus;
   const showCount=props.showCount;
   return (
     <div className="container">
       
-      <Table striped bordered hover>
-        <thead>
+      <Table>
+        {/* <thead>
           <tr>
             <th>Schedule ID</th>
             <th>Start Place</th>
@@ -78,16 +82,20 @@ function TableUI(props) {
             {showCount &&<th>Count</th>}
             {showStatus && <th>Status</th>}
           </tr>
-        </thead>
+        </thead> */}
         <tbody>
           {data.map((row, index) => (
+            
+            
+            
             <tr key={row.schedule_id}>
-              <td>{row.schedule_id}</td>
+              <TableTest row={row} handleStatusClick={handleStatusClick} index={index} showCount={showCount} showStatus={showStatus}/>
+              {/* <td>{row.schedule_id}</td>
               <td>{row.start_place}</td>
               <td>{row.end_place}</td>
-              <td>{row.date}</td>
-              <td>{row.time}</td>
-              {showCount && <td>{Object.keys(JSON.parse(row.listofpassengers)).filter(item => !Array.isArray(item) || item.length !== 0).length} 
+              <td>{moment.utc(row.date).tz('Asia/Kolkata').format('DD-MM-YYYY')}</td>
+              <td>{moment.utc(row.time).tz('Asia/Kolkata').format('hh:mm:ss A')}</td>
+              {showCount && <td>{JSON.parse(row.listofpassengers).filter(item=>Object.keys(item).length>0).length} 
                 <Button onClick={()=>displayPassengers(index)}>{"view"}</Button>
 
                 <div className='container' >
@@ -111,9 +119,9 @@ function TableUI(props) {
                     </tbody>
                   </Table>
                 </div>
-              </td>}
-              {showStatus && <td>
-                <Button onClick={()=>handleStatusClick(index)} variant={row.status === 'Unjoin' ? 'danger' : 'success'}>{row.status}</Button>
+              </td>} */}
+              { <div>
+                {/* <Button onClick={()=>handleStatusClick(index)} variant={row.status === 'Unjoin' ? 'danger' : 'success'}>{row.status}</Button> */}
                 <div style={{display: "none"}} id={index+"dialogdiv"}>
                   <div id="myDialog" class="dialog">
                     <div id="mydialog-content" class="dialog-content" >
@@ -134,7 +142,7 @@ function TableUI(props) {
                     </div>
                   </div>
                 </div>
-                </td>} 
+                </div>} 
             </tr>
           ))}
         </tbody>

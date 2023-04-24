@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate, Outlet , useNavigate} from 'react-router-dom';
 import axios from 'axios'
+import './loading.css'
 const PrivateRoute = () => {
     const [auth, Setauth] = useState(false);
     const navigate = useNavigate();
@@ -21,7 +22,34 @@ const PrivateRoute = () => {
     console.log("auth is",auth)
     if(!auth)
     {
-       return <div>Loading</div>
+       return <div class="main">
+       {/* <div class="load sidebar"></div> */}
+     
+       <div class="inner">
+       {/* <div class="items"> */}
+           <div class="load fixtop">
+           
+           </div>
+        
+         {/* </div> */}
+         <div class="header">
+           {/* <div class="load avatar"></div> */}
+           <div class="info">
+             {/* <div class="load title"></div> */}
+             <div class="load text"></div>
+           </div>
+         </div>
+     
+         <div class="items">
+           <div class="load item2">
+           
+           </div>
+           <div class="load item2"></div>
+           <div class="load item2"></div>
+         </div>
+       </div>
+     </div>
+     
     }
         // var auth =false; // determine if authorized, from context or however you're doing it
         // if(sessionStorage.getItem('sometoken')){

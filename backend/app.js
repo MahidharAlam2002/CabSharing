@@ -1,9 +1,12 @@
 const express = require('express');
 const bodyParser = require("body-parser");
 const mysql = require('mysql');
+const moment = require('moment-timezone');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 var session = require('express-session');
+const { promisify } = require('util');
+
 const cors=require("cors");
 const corsOptions ={
    origin:'*', 
@@ -34,7 +37,7 @@ const pool = mysql.createPool({
   port: 3306,
   ssl:true
 });
-
+const query = promisify(pool.query).bind(pool);
 // serialize and deserialize user information
 passport.serializeUser((user, done) => {
   // console.log("serializeUser");
@@ -70,7 +73,7 @@ async (accessToken, refreshToken, profile, done) => {
       photo:photos[0].value
     };
     // console.log("newUserss",newUser);
-
+    
     pool.query('INSERT INTO users SET ?', newUser, (err, res) => {
       if (err) done(err);
       newUser.id = res.insertId;
@@ -105,13 +108,13 @@ app.get('/profile', (req, res) => {
 
 app.get('/home', (req, res) => {
   // console.log('app.get /home');
-  console.log('from nodejs 96 :'+req.user);
+  // console.log('from nodejs 96 :'+req.user);
   res.redirect('http://localhost:3000/home');
 });
 
 app.get('/user', (req, res) => {
   // console.log('app.get /home');
-  console.log('from nodejs 105 :'+JSON.stringify(req.user));
+  // console.log('from nodejs 105 :'+JSON.stringify(req.user));
   // console.log('res from 114, 115 :');
   // console.log(res);
   res.redirect('http://localhost:3000/home');
@@ -130,7 +133,7 @@ app.get('/auth/google/home',
   passport.authenticate('google', { failureRedirect: '/' }),
   function (req, res){
     // console.log('app.get /auth/google/home passport.authenticate');
-    console.log('req.user 132 :'+JSON.stringify(req.user));
+    // console.log('req.user 132 :'+JSON.stringify(req.user));
     res.redirect('http://localhost:3000/home');
   }
 );
@@ -147,11 +150,11 @@ app.get('/logout',(req,res)=>{
 //   console.log('req.user 117 :'+req.user);
 //   res.redirect('http://localhost:8080/auth/google/home');
 // });
-app.get('/search', (req, res) => {
+app.get('/search', async (req, res) => {
   // handle GET request for /users endpoint
 
   //working start
-  console.log("search",req.query)
+  // console.log("search",req.query)
 //   const startPlace = req.query.startPlace|| null;
   
 //   const endPlace = req.query.endPlace || null;
@@ -198,7 +201,7 @@ const startPlace = req.query.startPlace || null;
 const endPlace = req.query.endPlace || null;
 const searchDate = req.query.date || null;
 const searchTime = req.query.time || null;
-console.log(searchDate);
+// console.log(searchDate);
 
 let datePlaceholder = searchDate ? '?' : 'CURDATE()';
 
@@ -251,17 +254,17 @@ if (searchDate) {
   queryParams.splice(2, 0, searchDate);
   queryParams.splice(4, 0, searchDate);
 }
-
-pool.query(sqlQuery, queryParams, (err, results) => {
-  if (err) {
-    console.error(err);
+try{
+const results=await query(sqlQuery, queryParams);
+// console.log(results);
+  res.send(results);
+}
+catch(err)
+{
+  console.error(err);
     res.send(err)
     return;
-  }
-  console.log(results);
-  res.send(results);
-});
-
+}
 
   //old
   // pool.query(
@@ -282,90 +285,164 @@ pool.query(sqlQuery, queryParams, (err, results) => {
   // res.send(req.status);
 });
 
-app.get('/mybooking',(req,res)=>{
+app.get('/mybooking',async(req,res)=>{
   const sqlQuery = `
   SELECT s.schedule_id,s.start_place,s.end_place,s.date,s.time
   FROM schedules as s inner join merge as m on m.schedule_id=s.schedule_id and m.google_id=?`;
   queryParams=[req.user.google_id];
-  pool.query(sqlQuery, queryParams, (err, results) => {
-    if (err) {
-      console.error(err);
+  try{
+  const results=await query(sqlQuery, queryParams);
+  // console.log(results);
+  res.send(results);
+}
+catch(err)
+{
+  console.error(err);
       res.send(err)
       return;
-    }
-    console.log(results);
-    res.send(results);
-  });
+}
 })
-app.get('/join',(req,res)=>{
+app.get('/join',async(req,res)=>{
   const sqlQuery=`insert into merge values(?,?)
   `
   queryParams=[req.user.google_id,req.query.schedule_id];
-  pool.query(sqlQuery, queryParams, (err, results) => {
-    if (err) {
-      console.error(err);
-      res.send(err)
-      return;
-    }
-    console.log(results);
+  try{
+  const results=await query(sqlQuery, queryParams);
+  // console.log(results);
     res.send(results);
-  });
+}
+catch(err)
+{
+  console.error(err);
+  res.send(err)
+  return;
+}
 })
-app.get('/unjoin',(req,res)=>{
+app.get('/unjoin',async(req,res)=>{
   const sqlQuery=`delete from merge where google_id=? and schedule_id =?`
   queryParams=[req.user.google_id,req.query.schedule_id];
-  pool.query(sqlQuery, queryParams, (err, results) => {
-    if (err) {
-      console.error(err);
+  try{
+  const results=await query(sqlQuery, queryParams);
+  const rows=await query('select * from merge where schedule_id=?',[req.query.schedule_id]);
+  console.log(rows,rows.length);
+  if (rows.length === 0) {
+    const schedule_id = req.query.schedule_id;
+    const res1=await query(`
+    DELETE FROM schedules
+    WHERE schedule_id = ?
+  `,[schedule_id]);
+      const res2= await query(`
+      DELETE FROM merge
+      WHERE schedule_id = ?
+    `,[schedule_id]);
+  }
+  // console.log(results);
+    res.send(results);
+} catch(err)
+{
+  console.error(err);
       res.send(err)
       return;
-    }
-    console.log(results);
-    res.send(results);
-  });
+}
 
 })
-app.get('/createschedule',(req,res)=>{
+app.get('/createschedule',async (req,res)=>{
   const sqlQuery1=`insert into schedules values(?,?,?,?,?)`;
   const sqlQuery2=`insert into merge values(?,?)`;
-  console.log('create',req.query);
+  // console.log('create',req.query);
   scheduleid=req.user.google_id;
   scheduleid+='_';
   scheduleid+=req.query.date;
   scheduleid+=req.query.time;
-  const myDate = new Date(req.query.date);
-  const myDateTime = myDate.toISOString().slice(0, 19).replace('T', ' ');
+//   const myDate = new Date(req.query.date);
+//   myDate.setHours(req.query.time.substring(0, 2));
+// myDate.setMinutes(req.query.time.substring(3, 5));
+// myDate.setSeconds(req.query.time.substring(6, 8));
+//   const myDateIST = myDate.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' });
+//   const mysqlDate = new Date(myDateIST).toISOString().slice(0, 19).replace('T', ' ');
+//   const myDateTime = myDate.toISOString().slice(0, 19).replace('T', ' ');
+moment.tz.setDefault('Asia/Kolkata');
+const date = req.query.date;
+const time = req.query.time;
 
-  queryParams1=[scheduleid,req.query.startPlace,req.query.endPlace,myDateTime ,req.query.time];
+// combine the date and time into a single string
+const dateTimeString = `${date} ${time}`;
+
+// convert the date and time to IST
+const dateTimeIST = moment.tz(dateTimeString, 'YYYY-MM-DD HH:mm:ss', 'Asia/Kolkata');
+
+// format the date and time for MySQL insertion
+const formattedDateTime = dateTimeIST.format('YYYY-MM-DD HH:mm:ss');
+
+// const indiaTime = myDate.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' });
+//   const mysqlDate = new Date(indiaTime).toISOString().slice(0, 19).replace('T', ' ');
+
+  queryParams1=[scheduleid,req.query.startPlace,req.query.endPlace, formattedDateTime , formattedDateTime];
   queryParams2=[req.user.google_id,scheduleid];
-  pool.query(sqlQuery1, queryParams1, (err, results) => {
-    if (err) {
-      console.error(err);
-      res.send(err)
-      return;
-    }
-    console.log(results);
-    // res.send(results);
-  });
-  
-})
-app.get('/createschedule2',(req,res)=>{
+ try{
+   const results=await query(sqlQuery1, queryParams1
+    //, (err, results) => {
+  //   // if (err) {
+  //   //   console.error(err);
+  //   //   res.send(err)
+  //   //   return;
+  //   // }
+  //   // console.log(results);
+  //   // const sqlQuery2=`insert into merge values(?,?)`;
+  //   // queryParams2=[req.user.google_id,scheduleid];
+  //   // console.log("Query 2 is running",scheduleid);
+  //   // pool.query(sqlQuery2, queryParams2, (err, results) => {
+  //   //   if (err) {
+  //   //     console.error("q2",err);
+  //   //     res.send(err)
+  //   //     return;
+  //   //   }
+  //   //   console.log("q2",results);
+  //   //   res.send(results);
+  //   // });
+  //   // res.send(results);
+   //}
+   );
+  // console.log(results);
   const sqlQuery2=`insert into merge values(?,?)`;
-  scheduleid=req.user.google_id;
-  scheduleid+='_';
-  scheduleid+=req.query.date;
-  scheduleid+=req.query.time;
   queryParams2=[req.user.google_id,scheduleid];
-  pool.query(sqlQuery2, queryParams2, (err, results) => {
-    if (err) {
-      console.error(err);
-      res.send(err)
-      return;
-    }
-    console.log(results);
+  // console.log("Query 2 is running",scheduleid);
+  try{
+ const results= await query(sqlQuery2, queryParams2);
+  // console.log("q2",results);
     res.send(results);
-  });
+}catch(err)
+{
+  console.error(err);
+  res.send(err)
+  return;
+}
+}
+catch(err){
+  console.error(err);
+  res.send(err)
+  return;
+}
 })
+// app.get('/createschedule2',(req,res)=>{
+//   const sqlQuery2=`insert into merge values(?,?)`;
+//   scheduleid=req.user.google_id;
+//   scheduleid+='_';
+//   scheduleid+=req.query.date;
+//   scheduleid+=req.query.time;
+//   queryParams2=[req.user.google_id,scheduleid];
+//   // console.log("Query 2",scheduleid);
+//   pool.query(sqlQuery2, queryParams2, (err, results) => {
+//     if (err) {
+//       console.error("q2",err);
+//       rses.send(err)
+//       return;
+//     }
+//     console.log("q2",results);
+//     res.send(results);
+//   });
+// })
+
 module.exports = pool;
 app.use(profileRoutes)
 app.use(searchRoutes)
