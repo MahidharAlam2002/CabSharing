@@ -3,9 +3,11 @@ import { AiOutlineSearch } from 'react-icons/ai';
 import { IoIosAddCircle } from 'react-icons/io';
 import TableUI from './Table';
 import "react-dropdown/style.css";
+import "./Search.css"
 // import Select from "react-select";
 import Dropdown from './Dropdown';
 import axios from'axios'
+import TableTest from './Tabletest';
 
 function SearchAndAddForm() {
   const [formData, setFormData] = useState({
@@ -14,6 +16,7 @@ function SearchAndAddForm() {
     date: '',
     time: ''
   });
+  const [loadagain,setloadagain]=useState(false);
   const [response,setresponse]=useState(null);
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -34,16 +37,7 @@ function SearchAndAddForm() {
     document.getElementById("addDialogdiv").style.display="none";
   };
 
-  const confirmButton=()=>{
-    // setsc(heduleDetails(scheduleDetails);
-    async function InsertData(){
-      const res= await axios.get('/createschedule',{params:scheduleDetails});
-      const res2= await axios.get('/createschedule2',{params:scheduleDetails})
-    }
-    InsertData();
-    document.getElementById("addDialogdiv").style.display="none";
-    // console.log(startPlace);
-  };
+  
   const handleSearch = async () => {
     // Call the search function with formData values
     console.log(formData)
@@ -51,7 +45,17 @@ function SearchAndAddForm() {
     console.log(res.data);
     setresponse(res.data);
   };
-
+  const confirmButton=()=>{
+    // setsc(heduleDetails(scheduleDetails);
+    async function InsertData(){
+      const res= await axios.get('/createschedule',{params:scheduleDetails});
+      // const res2= await axios.get('/createschedule2',{params:scheduleDetails})
+    }
+    InsertData();
+    handleSearch();
+    document.getElementById("addDialogdiv").style.display="none";
+    // console.log(startPlace);
+  };
   const handleAdd = () => {
     // Call the add function with formData values
     document.getElementById("addDialogdiv").style.display="block";
@@ -83,9 +87,13 @@ function SearchAndAddForm() {
   }
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center', marginRight: 100 }}>
-        <AiOutlineSearch onClick={handleSearch} size={32} style={{ marginRight: 8, cursor: 'pointer' }} />
-        <Dropdown
+      {/* <TableTest/> */}
+      
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center', backgroundImage:'url("https://lh3.googleusercontent.com/p/AF1QipMttxVTtnaZBUARGuyX6Tk6x6nCNbqng9VJyClc=s1360-w1360-h1020")', backgroundRepeat: 'no-repeat', backgroundSize: 'cover', height: '20%',paddingBottom:'100px',paddingTop:'100Px'}}>
+      
+        <AiOutlineSearch onClick={handleSearch} size={42} style={{ marginRight: 8, cursor: 'pointer' }} />
+        
+        <div><Dropdown
           isSearchable={true}
           isMulti={true}
           placeHolder="Start Place"
@@ -93,7 +101,8 @@ function SearchAndAddForm() {
           options={options}
           onChange={(value) =>{ formData.startPlace=Valuelist(value);console.log(value);}}
         />
-
+        </div>
+        <div>
         <Dropdown
           isSearchable={true}
           isMulti={true}
@@ -101,7 +110,7 @@ function SearchAndAddForm() {
           options={options}
           onChange={(value) => {formData.endPlace=Valuelist(value);console.log(value)}}
         />
-
+        </div>
         <input
           type="date"
           id="date"
@@ -122,7 +131,7 @@ function SearchAndAddForm() {
           style={{ padding: '10px 16px', borderRadius: 8, outline: 'none', border: 'none', marginRight: 8, width: 150 }}
         />
 
-      <IoIosAddCircle onClick={handleAdd} size={32} style={{ cursor: 'pointer' }} />
+      <IoIosAddCircle onClick={handleAdd} size={42} style={{ cursor: 'pointer' }} />
       <div style={{display: "none"}} id="addDialogdiv">
         <div id="myDialog" class="dialog">
           <div id="mydialog-content" class="dialog-content" >

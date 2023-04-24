@@ -1,8 +1,18 @@
 .dropdown-container {
     text-align: left;
-    border: 1px solid #ccc;
+    /* border: 1px solid #131212; */
     position: relative;
-    border-radius: 5px;
+    /* border-radius: 5px; */
+    /* margin-right: 10px; */
+    background-color:field;
+   
+    padding: 10px 16px;
+    border-radius: 8px;
+    outline: none;
+    border: none;
+    margin-right: 8px;
+    width: 250px;
+  
   }
   
   .dropdown-input {
