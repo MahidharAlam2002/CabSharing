@@ -445,7 +445,53 @@ catch(err){
 
 module.exports = pool;
 app.use(profileRoutes)
+app.use(bodyParser.json());
+
+app.post('/profile3', (req, res) => {
+  const phoneNumber = req.body.phoneNumber;
+  console.log("Hello phone: " + phoneNumber);
+  console.log("USer google_id details:" + JSON.stringify(req.user.google_id));
+  
+  pool.query('UPDATE users SET phone = ? WHERE google_id = ?', [phoneNumber,req.user.google_id],(err,res)=>
+  {
+    if(err)
+    {
+      console.log(err);
+      return;
+    }
+    console.log('updated');
+  });
+  
+});
+app.get('/profile2', (req, res) => {
+  // handle GET request for /users endpoint
+  pool.query('select * from users where google_id=?',[req.user.google_id],(err,results)=>{
+    if(err)
+    {
+      console.log(err);
+      return;
+    }
+    console.log(results[0].name);
+
+    res.send(results[0]);
+  })
+});
 app.use(searchRoutes)
 app.listen(8080, () => {
   console.log('Server started on port 8080');
 });
+
+// app.post('/profile3', (req, res) => {
+//   const phoneNumber = req.body.phone;
+//   console.log("Hello phone: " + phoneNumber);
+// });
+  // // perform database operation to store/update the phone number
+  // const sql = 'INSERT INTO users (phone) VALUES (?) ON DUPLICATE KEY UPDATE phone = ?';
+  // connection.query(sql, [phoneNumber, phoneNumber], (err, result) => {
+  //   if (err) {
+  //     console.error(err);
+  //     res.status(500).json({ error: 'Failed to update phone number.' });
+  //   } else {
+  //     res.json({ success: true });
+  //   }
+  // });

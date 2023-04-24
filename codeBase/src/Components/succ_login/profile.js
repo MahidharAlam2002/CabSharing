@@ -1,64 +1,126 @@
 import NavBar from "./NavBar";
-import React from 'react';
-import { MDBCol, MDBContainer, MDBRow, MDBCard, MDBCardText, MDBCardBody, MDBCardImage, MDBTypography, MDBIcon } from 'mdb-react-ui-kit';
+import React , {useEffect, useState } from 'react';
+import { MDBCol, MDBContainer, MDBRow, MDBCard, MDBCardText, MDBCardBody, MDBTypography} from 'mdb-react-ui-kit';
 import Button from 'react-bootstrap/Button';
-// function Profile() {
-//     return (  <div><NavBar/>My Profile</div>);
-// }
-// export default Profile;
 import axios from 'axios';
 
-export default function Profile() {
+
+
+function Profile() {
+
+const [data, setData] = useState([]);
+const [phoneNumber, setPhoneNumber] = useState('');
+const [isEditing, setIsEditing] = useState(false);
+const [errorMessage, setErrorMessage] = useState('');
+
+  const handleChange = (event) => {
+    setPhoneNumber(event.target.value);
+    setErrorMessage('');
+  };
+
+
+  const handleEdit = (event) => {
+    setIsEditing(true);
+    setPhoneNumber(event.target.value)
+  };
+
+useEffect(() =>{
+  const handleSearch = async () =>{
+    const res = await axios.get('/profile2');
+    setData(res.data)
+  }
+  handleSearch();
+}, []);
+
+const handlePhoneNumberSubmit = (e) => {
+  e.preventDefault();
+
+  if (!isValidPhoneNumber(phoneNumber)) {
+    setErrorMessage('(Please enter a valid 10-digit phone number.)');
+    return;
+  }
+
+  console.log(`Saving phone number: ${phoneNumber}`);
+  
+  axios.post('/profile3', { phoneNumber })
+    .then(response => console.log(response.data))
+    .catch(error => console.error(error));
+   
+    if (phoneNumber.trim() !== '') {
+      setIsEditing(false);
+    }
+  
+  }
+
+  const isValidPhoneNumber = (phoneNumber) => {
+    const regex = /^\d{10}$/;
+    return regex.test(phoneNumber);
+  };
+
+
+
+
   return (
-    <div><NavBar/>
+
+<div><NavBar/>
     <section className="vh-100" style={{ backgroundColor: '#f4f5f7' }}>
-    <MDBTypography  className="pt-5 text-center" tag='h2' >My Profile</MDBTypography>
-      <MDBContainer className="py-5 h-80">
+    <MDBTypography  className="pt-3 text-center" tag='h2' >My Profile</MDBTypography>
+      <MDBContainer className="py-4 h-80">
         <MDBRow className="justify-content-center align-items-center h-100">
           <MDBCol lg="6" className="mb-4 mb-lg-0">
             <MDBCard className="mb-3" style={{ borderRadius: '.5rem' }}>
               <MDBRow className="g-0">
                 <MDBCol md="4" className="gradient-custom text-center text-white"
                   style={{ borderTopLeftRadius: '.5rem', borderBottomLeftRadius: '.5rem' }}>
-                  <MDBCardImage src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
-                    alt="Avatar" className="my-5" style={{ width: '150px' }} fluid />
-                  <MDBTypography tag="h5">Marie Horwitz</MDBTypography>
-                  <MDBCardText>Web Designer</MDBCardText>
-                  <MDBIcon far icon="edit mb-5" />
+                  <img src= {data.photo}
+                    className="my-5" style={{ width: '150px' }} fluid />
                 </MDBCol>
                 <MDBCol md="8">
                   <MDBCardBody className="p-5">
-                    <MDBTypography tag="h6">Information</MDBTypography>
+                    <MDBTypography tag="h4">Information</MDBTypography>
                     <hr className="mt-0 mb-4" />
                     <MDBRow className="pt-2">
                       <MDBCol size="8" className="mb-3">
-                        <MDBTypography tag="h6">Name:</MDBTypography>
-                        <MDBCardText className="text-muted">John Smith</MDBCardText>
+                    <MDBTypography tag="h5">Name</MDBTypography>
+                        <MDBCardText className="text-muted">{data.name}</MDBCardText>
+                      </MDBCol>
+                      <MDBCol size="9" className="mb-3">
+                    <MDBTypography tag="h5">Email</MDBTypography>
+                        <MDBCardText className="text-muted">{data.email}</MDBCardText>
                       </MDBCol>
                       <MDBCol size="8" className="mb-3">
-                        <MDBTypography tag="h6">E-mail:</MDBTypography>
-                        <MDBCardText className="text-muted">info@example.com</MDBCardText>
-                      </MDBCol>
-                    </MDBRow>
 
-                    {/* <MDBTypography tag="h6">Information</MDBTypography>
-                    <hr className="mt-0 mb-4" />
-                    <MDBRow className="pt-1">
-                      <MDBCol size="6" className="mb-3">
-                        <MDBTypography tag="h6">Email</MDBTypography>
-                        <MDBCardText className="text-muted">info@example.com</MDBCardText>
-                      </MDBCol>
-                      <MDBCol size="6" className="mb-3">
-                        <MDBTypography tag="h6">Phone</MDBTypography>
-                        <MDBCardText className="text-muted">123 456 789</MDBCardText>
-                      </MDBCol>
-                    </MDBRow> */}
-
-                    <div className="d-flex justify-content-start">
-                      <a href="#!"><MDBIcon fab icon="facebook me-3" size="lg" /></a>
-                      <a href="#!"><MDBIcon fab icon="twitter me-3" size="lg" /></a>
-                      <a href="#!"><MDBIcon fab icon="instagram me-3" size="lg" /></a>
-                    </div>
+    <div>
+      <form onSubmit={handlePhoneNumberSubmit}>
+      <MDBTypography tag="h5">Phone</MDBTypography>
+          <input 
+                 type="text" 
+                 value={phoneNumber || ( isEditing ? '' : data.phone)  } 
+                 onChange={handleChange}
+                 placeholder="Enter Mobile Number"
+                 disabled={!isEditing} 
+          />
+          
+        {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
+        {isEditing ? (
+          <MDBCol  md='5' offsetMd='1' size="4" >
+          <MDBRow className="pt-2">
+          <Button type="submit" > Save</Button>
+          </MDBRow>
+          </MDBCol>
+          
+          
+        ) : (
+          <MDBCol  md='5' offsetMd='1' size="4" >
+          <MDBRow className="pt-2">
+          <Button type="button" onClick={handleEdit}>Edit</Button>
+          </MDBRow>
+          </MDBCol>
+        )}
+      </form>
+    </div>
+                    </MDBCol>
+                  </MDBRow>
                   </MDBCardBody>
                 </MDBCol>
               </MDBRow>
@@ -66,16 +128,19 @@ export default function Profile() {
           </MDBCol>
         </MDBRow>
       </MDBContainer>
-      <MDBTypography  className="pt-5 text-center" tag='h2' >
-      <Button variant="danger" type="submit" href='/' onClick={function (){
+
+      <MDBTypography  className="text-center justify-content-center align-items-center" tag='h2' >
+      <Button variant="danger"  type="submit" href='/' onClick={function (){
                     sessionStorage.removeItem('sometoken');
                     axios.get('/logout');
                 }}>
         LOG OUT
       </Button>
       </MDBTypography>
+
     </section>
 
     </div>
   );
 }
+export default Profile;
