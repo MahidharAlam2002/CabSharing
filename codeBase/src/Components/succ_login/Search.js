@@ -8,6 +8,7 @@ import "./Search.css"
 import Dropdown from './Dropdown';
 import axios from'axios'
 import TableTest from './Tabletest';
+import Loading from './Loading';
 
 function SearchAndAddForm() {
   const [formData, setFormData] = useState({
@@ -16,6 +17,7 @@ function SearchAndAddForm() {
     date: '',
     time: ''
   });
+  const [LoadTable,setLoadTable]=useState(true);
   const [loadagain,setloadagain]=useState(false);
   const [response,setresponse]=useState(null);
   const handleInputChange = (event) => {
@@ -28,7 +30,14 @@ function SearchAndAddForm() {
     date: '',
     time: ''
   });
-
+  const[ options,setOptions] =useState([]) 
+  // [
+  //   { value: "IIT Hyderabad", label: "IIT Hyderabad" },
+  //   { value: "Secunderabad Railway Station", label: "Secunderabad Railway Station" },
+  //   { value: "Rajiv Gandhi International Airport", label: "Rajiv Gandhi International Airport" },
+  //   { value: "Miyapur", label: "Miyapur" },
+  //   { value: "JBS Bus Stand", label: "JBS Bus Stand" }
+  // ];
   const handlescheduledetails=(event)=>{
     const { name, value } = event.target;
     setscheduleDetails({ ...scheduleDetails, [name]: value });
@@ -41,9 +50,11 @@ function SearchAndAddForm() {
   const handleSearch = async () => {
     // Call the search function with formData values
     console.log(formData)
+    setLoadTable(true);
     const res=await axios.get('/search',{params:formData});
     console.log(res.data);
     setresponse(res.data);
+    setLoadTable(false);
   };
   const confirmButton=()=>{
     // setsc(heduleDetails(scheduleDetails);
@@ -65,17 +76,34 @@ function SearchAndAddForm() {
   // function handleSelect(data) {
   //   setSelectedOptions(data);
   // }
-
+  
   useEffect(()=>{
     handleSearch();
+    
   },[])
-  const options = [
-    { value: "IIT Hyderabad", label: "IIT Hyderabad" },
-    { value: "Secunderabad Railway Station", label: "Secunderabad Railway Station" },
-    { value: "Rajiv Gandhi International Airport", label: "Rajiv Gandhi International Airport" },
-    { value: "Miyapur", label: "Miyapur" },
-    { value: "JBS Bus Stand", label: "JBS Bus Stand" }
-  ];
+  useEffect(()=>{
+    async function FetchOptions()
+    {
+      // console.log("fetching")
+      try{
+      const res=await axios.get('/dropdownlist');
+      // console.log("dsfdf",res.data);
+      const t=res.data.map((row,index)=>{
+        
+        return {value:row.place_name,label:row.place_name}
+      })
+      // console.log("cc",t);
+      setOptions(t);
+      }
+      catch(err)
+      {
+        console.log("errrr")
+        console.log(err);
+      }
+    }
+    FetchOptions();
+  },[])
+  
   const Valuelist=(jsonList)=>{
     const values=[]
     jsonList.forEach(obj => {
@@ -210,7 +238,7 @@ function SearchAndAddForm() {
       </div>
       {/* <button onClick={handleAdd}>Add</button> */}
     </div><div>
-        <TableUI showStatus={true} showCount={true} data={response} handleSearch={handleSearch}/>
+        {LoadTable?<div><Loading/></div>:<TableUI showStatus={true} showCount={true} data={response} handleSearch={handleSearch}/>}
       </div>
     </div>
   );

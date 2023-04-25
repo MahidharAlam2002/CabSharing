@@ -237,23 +237,45 @@ LEFT JOIN merge ON schedules.schedule_id = merge.schedule_id AND merge.google_id
 LEFT JOIN merge as m2 ON schedules.schedule_id = m2.schedule_id
 LEFT JOIN users ON m2.google_id = users.google_id
 WHERE (${startPlace ? 'start_place IN (?)' : 'TRUE'})
-AND (${endPlace ? 'end_place IN (?)' : 'TRUE'})
-GROUP BY schedules.schedule_id
+AND (${endPlace ? 'end_place IN (?)' : 'TRUE'}) AND schedules.time >CONVERT_TZ(NOW(), @@session.time_zone, '+05:30')
+GROUP BY schedules.schedule_id 
 ORDER BY 
   CASE 
     WHEN date IS NULL AND time IS NULL THEN 1
-    WHEN date IS NULL THEN ABS(TIMEDIFF(time, ?))
-    WHEN time IS NULL THEN ABS(DATEDIFF(CURDATE(), '${datePlaceholder}'))
-    ELSE  ABS(DATEDIFF('${datePlaceholder}', date)) + ABS(TIMEDIFF(time, ?))
+    WHEN date IS NULL THEN ABS(TIMEDIFF(time, null))
+    WHEN time IS NULL THEN ABS(DATEDIFF(CURDATE(), ${searchDate ? '?' : 'CURDATE()'}))*86400
+    ELSE  ABS(DATEDIFF(${searchDate ? '?' : 'CURDATE()'}, date))*86400 +ABS(TIMESTAMPDIFF(SECOND,TIME(${searchTime ? '?' : 'CURTIME()'}),TIME(time)))
   END ASC
 `
 // console.log(req.user)
-let queryParams = [req.user.google_id, startPlace, endPlace, searchTime, searchTime];
-
-if (searchDate) {
-  queryParams.splice(2, 0, searchDate);
-  queryParams.splice(4, 0, searchDate);
+let queryParams = [req.user.google_id];
+let t=1;
+if(startPlace)
+{
+  queryParams.splice(t, 0,startPlace);
+  t=t+1;
 }
+if(endPlace)
+{
+  queryParams.splice(t,0,endPlace);
+  t=t+1;
+}
+if (searchDate) {
+  const sqlDate = new Date(searchDate);
+  queryParams.splice(t, 0,sqlDate);
+  t=t+1;
+  queryParams.splice(t, 0,sqlDate);
+  t=t+1;
+}
+if(searchTime)
+{
+  const sqlTime = moment(searchTime, 'HH:mm');
+  const sqlTimeString = sqlTime.format('HH:mm:ss');
+  queryParams.splice(t, 0,sqlTimeString);
+  t=t+1;
+}
+// console.log(queryParams)
+// console.log(mysql.format(sqlQuery, queryParams));
 try{
 const results=await query(sqlQuery, queryParams);
 // console.log(results);
@@ -262,7 +284,8 @@ const results=await query(sqlQuery, queryParams);
 catch(err)
 {
   console.error(err);
-    res.send(err)
+    // res.send(err)
+    res.status(400)
     return;
 }
 
@@ -289,6 +312,40 @@ app.get('/mybooking',async(req,res)=>{
   const sqlQuery = `
   SELECT s.schedule_id,s.start_place,s.end_place,s.date,s.time
   FROM schedules as s inner join merge as m on m.schedule_id=s.schedule_id and m.google_id=?`;
+  queryParams=[req.user.google_id];
+  try{
+  const results=await query(sqlQuery, queryParams);
+  // console.log(results);
+  res.send(results);
+}
+catch(err)
+{
+  console.error(err);
+      res.send(err)
+      return;
+}
+})
+app.get('/mycurrentbooking',async(req,res)=>{
+  const sqlQuery = `
+  SELECT s.schedule_id,s.start_place,s.end_place,s.date,s.time
+  FROM schedules as s inner join merge as m on m.schedule_id=s.schedule_id and m.google_id=? and s.time >= CONVERT_TZ(NOW(), @@session.time_zone, '+05:30')`;
+  queryParams=[req.user.google_id];
+  try{
+  const results=await query(sqlQuery, queryParams);
+  // console.log(results);
+  res.send(results);
+}
+catch(err)
+{
+  console.error(err);
+      res.send(err)
+      return;
+}
+})
+app.get('/mypastbooking',async(req,res)=>{
+  const sqlQuery = `
+  SELECT s.schedule_id,s.start_place,s.end_place,s.date,s.time
+  FROM schedules as s inner join merge as m on m.schedule_id=s.schedule_id and m.google_id=? and s.time <CONVERT_TZ(NOW(), @@session.time_zone, '+05:30')`;
   queryParams=[req.user.google_id];
   try{
   const results=await query(sqlQuery, queryParams);
@@ -442,15 +499,24 @@ catch(err){
 //     res.send(results);
 //   });
 // })
-
+app.get('/dropdownlist',async(req,res)=>{
+  try{
+    const results=await query('select * from places;');
+    // console.log(results);
+    res.send(results);
+  }catch(err)
+  {
+    console.log(err);
+  }
+})
 module.exports = pool;
 app.use(profileRoutes)
 app.use(bodyParser.json());
 
 app.post('/profile3', (req, res) => {
   const phoneNumber = req.body.phoneNumber;
-  console.log("Hello phone: " + phoneNumber);
-  console.log("USer google_id details:" + JSON.stringify(req.user.google_id));
+  // console.log("Hello phone: " + phoneNumber);
+  // console.log("USer google_id details:" + JSON.stringify(req.user.google_id));
   
   pool.query('UPDATE users SET phone = ? WHERE google_id = ?', [phoneNumber,req.user.google_id],(err,res)=>
   {
@@ -471,7 +537,7 @@ app.get('/profile2', (req, res) => {
       console.log(err);
       return;
     }
-    console.log(results[0].name);
+    // console.log(results[0].name);
 
     res.send(results[0]);
   })

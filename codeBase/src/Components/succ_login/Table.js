@@ -5,13 +5,14 @@ import "./Dialoguebox.css";
 import axios from 'axios';
 import moment from 'moment-timezone';
 import TableTest from './Tabletest';
+import Loading from './Loading';
 function TableUI(props) {
   const [data, setData] = useState([
     // { scheduleid: 1, startplace: 'New York', endplace: 'Los Angeles', date: '2023-04-15', time: '12:00 PM', listOfPassengers:[] ,status: 'Join' },
     // { scheduleid: 2, startplace: 'San Francisco', endplace: 'Seattle', date: '2023-04-16', time: '10:00 AM', listOfPassengers:[{SNo:1, Name:"Ram Charan2",PhNo: "0000000001"}, {SNo:2, Name:"NTR",PhNo: "0000000002"}] , status: 'Join' },
     // { scheduleid: 3, startplace: 'Chicago', endplace: 'Houston', date: '2023-04-17', time: '1:00 PM', listOfPassengers:[{SNo:1, Name:"Ram Charan3",PhNo: "0000000001"}, {SNo:2, Name:"NTR",PhNo: "0000000002"}, {SNo:3, Name:"Allu Arjun",PhNo: "0000000003"}] , status: 'Join' },
   ]);
-
+  const [LoadTable,setLoadTable]=useState(true);
   const profileDetails={name: 'Balayya1', email:'abc@def.com', phonenumber: '1234567890', startplace: 'IIT Hyderabad', endplace: 'Miyapur', date: '2023-04-15', time: '12:00 PM'};
   const [rerender,setrerender]=useState(false);
   const handleStatusClick = (index) => {
@@ -34,6 +35,7 @@ function TableUI(props) {
 
   const confirmButton=async(status, index)=>{
     const newData=[...data];
+    setLoadTable(true);
     if(status==="Join")
     {
       /*  code to merge the join request */
@@ -55,6 +57,7 @@ function TableUI(props) {
       data[index].status="Join";
     }
     setData(newData);
+    setLoadTable(false);
     document.getElementById(index+"dialogdiv").style.display="none";
     
   };
@@ -64,7 +67,11 @@ function TableUI(props) {
     
     if(props.data)
      { 
-      setData(props.data)}
+      
+      setData(props.data)
+      setLoadTable(false);
+    }
+      
   },[props.data,rerender])
   const showStatus=props.showStatus;
   const showCount=props.showCount;
@@ -84,7 +91,7 @@ function TableUI(props) {
           </tr>
         </thead> */}
         <tbody>
-          {data.map((row, index) => (
+          {LoadTable? <div><Loading/></div>:data.map((row, index) => (
             
             
             
