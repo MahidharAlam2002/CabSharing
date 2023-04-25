@@ -17,8 +17,8 @@ function Login() {
                 <Container>
                     <Navbar.Brand>Cab Sharing</Navbar.Brand>
                     <Nav className="me-auto">
-                        <Nav.Link href="https://iith.ac.in/">IIT Hyderabad</Nav.Link>
-                        <Nav.Link href='https://github.com/MahidharAlam2002/CabSharing' >Github Repo</Nav.Link>
+                        <Nav.Link href="https://iith.ac.in/" target='_blank'>IIT Hyderabad</Nav.Link>
+                        <Nav.Link href='https://github.com/MahidharAlam2002/CabSharing'target='_blank' >Github Repo</Nav.Link>
                         {/* <Nav.Link href="#pricing">Pricing</Nav.Link> */}
                     </Nav>
                 </Container>
