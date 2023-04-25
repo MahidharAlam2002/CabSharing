@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Navigate, Outlet , useNavigate} from 'react-router-dom';
 import axios from 'axios'
 import './loading.css'
-const PrivateRoute = () => {
+const AdminRoute = () => {
     const [auth, Setauth] = useState(false);
     const navigate = useNavigate();
     useEffect(() => {
@@ -11,13 +11,14 @@ const PrivateRoute = () => {
         if (response.data !== "") {
           console.log(response.data);
           if((response.data).google_id==='110671206414098862281' || (response.data).google_id==='104607823624198558021' || (response.data).google_id==='112766095813271316268' || (response.data).google_id==='117191595535130300633'){
+            Setauth(true);
             console.log("Admin detected.");
-            navigate("/" , {replace: true});
           }
           else{
-            Setauth(true);
             console.log("Admin not detected.");
+            navigate("/" , {replace: true});
           }
+        //   Setauth(true);
           console.log(auth);
         }
         else
@@ -68,4 +69,4 @@ const PrivateRoute = () => {
         return  <Outlet /> ; 
 };
 
-export default PrivateRoute;
+export default AdminRoute;

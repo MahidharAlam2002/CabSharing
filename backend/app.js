@@ -20,6 +20,8 @@ const searchRoutes=require('./search')
 app.use(cors(corsOptions)); // Use this after the variable declaration
 
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
 
 app.use(session({
   secret: "Our little secret",
@@ -134,7 +136,13 @@ app.get('/auth/google/home',
   function (req, res){
     // console.log('app.get /auth/google/home passport.authenticate');
     // console.log('req.user 132 :'+JSON.stringify(req.user));
-    res.redirect('http://localhost:3000/home');
+    // console.log(req.user);
+    if(req.user.google_id==='110671206414098862281' || req.user.google_id==='104607823624198558021' || req.user.google_id==='112766095813271316268' || req.user.google_id==='117191595535130300633'){
+      res.redirect('http://localhost:3000/users');
+    }
+    else{
+      res.redirect('http://localhost:3000/home');
+    }
   }
 );
 app.get('/api/authenticate',(req,res)=>{
@@ -499,6 +507,7 @@ catch(err){
 //     res.send(results);
 //   });
 // })
+<<<<<<< Updated upstream
 app.get('/dropdownlist',async(req,res)=>{
   try{
     const results=await query('select * from places;');
@@ -509,6 +518,146 @@ app.get('/dropdownlist',async(req,res)=>{
     console.log(err);
   }
 })
+=======
+
+app.get('/users', async function(req, res){
+  const query1 = 'select * from users';
+  try{
+    const results = await query(query1,[]);
+    // console.log('results 451');
+    // console.log((results));
+    res.send(results);
+  }
+  catch(err){
+    console.log(err);
+    res.send(err);
+  }
+});
+
+app.get('/places', async function (req, res){
+  const query1 = 'select * from places';
+  try{
+    const results = await query(query1,[]);
+    // console.log('results 461');
+    // console.log((results));
+    res.send(results);
+  }
+  catch(err){
+    console.log(err);
+    res.send(err);
+  }
+});
+
+
+app.post('/places', async function(req, res){
+  const places = (req.body.places);
+  // console.log('479 places :'+places);
+  // console.log('480 req.body.places: ');
+  // console.log(JSON.stringify(places));
+  const query1 = "delete from merge where schedule_id in (select schedule_id from schedules where (start_place = ? or end_place = ?))";
+  const query2 = "delete from schedules where start_place = ? or end_place = ?";
+  const query3 = "delete from places where place_name = ?";
+  const queryParam1 = [places, places];
+  const queryParam3 = [places];
+  
+  try {
+    const results1 = await query(query1, queryParam1);
+    const results2 = await query(query2, queryParam1);
+    const results3 = await query(query3, queryParam3);
+    // console.log('results1 :'+ JSON.stringify(results1));
+    // console.log('results2 :'+JSON.stringify(results2));
+    // console.log('results3 :'+JSON.stringify(results3));
+    res.send('done');
+  }
+
+  catch(err) {
+    console.log(err);
+    res.send(err);
+  }
+});
+
+
+app.post('/users', async function(req, res){
+  const google_id = (req.body.google_id);
+  // console.log('460 :'+google_id);
+  // console.log('461 req.body.google_id: ');
+  // console.log(JSON.stringify(google_id));
+  const query1 = "delete from merge where google_id =?";
+  const query2 = "delete from users where google_id = ?";
+  const queryParam = [google_id];
+  
+  try {
+    const results1 = await query(query1, queryParam);
+    const results2 = await query(query2, queryParam);
+    // console.log('results1 :'+ JSON.stringify(results1));
+    // console.log('results2 :'+JSON.stringify(results2));
+    res.send('done');
+  }
+
+  catch(err) {
+    console.log(err);
+    res.send(err);
+  }
+});
+
+app.get('/schedules', async function(req, res){
+  const query1 = 'select * from schedules';
+  try{
+    const results = await query(query1,[]);
+    // console.log('results 528');
+    // console.log((results));
+    res.send(results);
+  }
+  catch(err){
+    console.log(err);
+    res.send(err);
+  }
+});
+
+app.post('/schedules', async function(req, res){
+  const schedule_id = (req.body.schedule_id);
+  // console.log('469 :'+schedule_id);
+  // console.log('470 req.body.schedule_id: ');
+  // console.log(JSON.stringify(schedule_id));
+  const query1 = "delete from merge where schedule_id =?";
+  const query2 = "delete from schedules where schedule_id = ?";
+  const queryParam = [schedule_id];
+  
+  try {
+    const results1 = await query(query1, queryParam);
+    const results2 = await query(query2, queryParam);
+    // console.log('results1 :'+ JSON.stringify(results1));
+    // console.log('results2 :'+JSON.stringify(results2));
+    res.send('done');
+  }
+
+  catch(err) {
+    console.log(err);
+    res.send(err);
+  }
+});
+
+app.post('/newPlace', async function(req, res){
+  const newPlace = req.body.newPlace;
+  const newValue = {
+    place_name: newPlace
+  }
+  // console.log("567 newPlace"+newPlace);
+  const query1 = 'insert into places set ?';
+  const queryParam = [newValue];
+  try {
+    const results = await query(query1, queryParam);
+    // console.log('results :'+JSON.stringify(results));
+    res.redirect('http://localhost:3000/places');
+  }
+
+  catch(err) {
+    console.log(err);
+    res.send(err);
+  }
+});
+
+>>>>>>> Stashed changes
 module.exports = pool;
 app.use(profileRoutes)
 app.use(bodyParser.json());
