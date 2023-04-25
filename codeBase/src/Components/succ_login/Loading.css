@@ -1,0 +1,13 @@
+.table-loading-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    height: 100%;   
+  }
+  
+  .table-loading-icon svg {
+    font-size: 2rem;
+    color: #000;
+  }
