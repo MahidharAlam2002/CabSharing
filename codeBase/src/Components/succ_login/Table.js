@@ -6,6 +6,7 @@ import axios from 'axios';
 import moment from 'moment-timezone';
 import TableTest from './Tabletest';
 import Loading from './Loading';
+import JoinDialoguebox from './JoinDialoguebox';
 function TableUI(props) {
   const [data, setData] = useState([
     // { scheduleid: 1, startplace: 'New York', endplace: 'Los Angeles', date: '2023-04-15', time: '12:00 PM', listOfPassengers:[] ,status: 'Join' },
@@ -13,10 +14,10 @@ function TableUI(props) {
     // { scheduleid: 3, startplace: 'Chicago', endplace: 'Houston', date: '2023-04-17', time: '1:00 PM', listOfPassengers:[{SNo:1, Name:"Ram Charan3",PhNo: "0000000001"}, {SNo:2, Name:"NTR",PhNo: "0000000002"}, {SNo:3, Name:"Allu Arjun",PhNo: "0000000003"}] , status: 'Join' },
   ]);
   const [LoadTable,setLoadTable]=useState(true);
-  const profileDetails={name: 'Balayya1', email:'abc@def.com', phonenumber: '1234567890', startplace: 'IIT Hyderabad', endplace: 'Miyapur', date: '2023-04-15', time: '12:00 PM'};
+  const profileDetails=props.profileDetails;
   const [rerender,setrerender]=useState(false);
   const handleStatusClick = (index) => {
-    document.getElementById(index+"dialogdiv").style.display="block";
+    document.getElementById(index+"join").style.display="block";
   };
   const presentlist=[[{SNo:1, Name:"Ram Charan2",PhNo: "0000000001"}],[{SNo:1, Name:"Ram Charan2",PhNo: "0000000001"}],[{SNo:1, Name:"Ram Charan2",PhNo: "0000000001"}],[{SNo:1, Name:"Ram Charan2",PhNo: "0000000001"}],[{SNo:1, Name:"Ram Charan2",PhNo: "0000000001"}],[{SNo:1, Name:"Ram Charan2",PhNo: "0000000001"}]];
   const displayPassengers=(displayTableIndex)=>{
@@ -30,7 +31,7 @@ function TableUI(props) {
   };
 
   const cancelButton=(index)=>{
-    document.getElementById(index+"dialogdiv").style.display="none";
+    document.getElementById(index+"join").style.display="none";
   };
 
   const confirmButton=async(status, index)=>{
@@ -58,11 +59,11 @@ function TableUI(props) {
     }
     setData(newData);
     setLoadTable(false);
-    document.getElementById(index+"dialogdiv").style.display="none";
+    document.getElementById(index+"join").style.display="none";
     
   };
   useEffect(()=>{
-    console.log("data came here",props.data);
+    // console.log("data came here",props.data);
    
     
     if(props.data)
@@ -128,8 +129,11 @@ function TableUI(props) {
                 </div>
               </td>} */}
               { <div>
+                  <div id={index+"join"} style={{display: "none", width: '100%', height: '100%', backgroundColor: 'rgb(0,0,0,0.4)', position: 'fixed', zIndex: 1, left: 0, top: 0, overflow: 'auto'}}>
+                    <JoinDialoguebox profileDetails={profileDetails} row={row} index={index} status={row.status} confirmButton={confirmButton} cancelButton={cancelButton} />
+                  </div>
                 {/* <Button onClick={()=>handleStatusClick(index)} variant={row.status === 'Unjoin' ? 'danger' : 'success'}>{row.status}</Button> */}
-                <div style={{display: "none"}} id={index+"dialogdiv"}>
+                {/* <div style={{display: "none"}} id={index+"dialogdiv"}>
                   <div id="myDialog" class="dialog">
                     <div id="mydialog-content" class="dialog-content" >
                         <div class="dialog-body">
@@ -148,7 +152,7 @@ function TableUI(props) {
                         </div>
                     </div>
                   </div>
-                </div>
+                </div> */}
                 </div>} 
             </tr>
           ))}

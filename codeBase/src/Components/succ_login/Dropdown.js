@@ -70,7 +70,7 @@ const Dropdown = ({
   const [searchValue, setSearchValue] = useState("");
   const searchRef = useRef();
   const inputRef = useRef();
-
+// useEffect(()=>{setSelectedValue(isMulti ? [] : null)},[placeHolder])
   useEffect(() => {
     setSearchValue("");
     if (showMenu && searchRef.current) {
@@ -90,6 +90,7 @@ const Dropdown = ({
       window.removeEventListener("click", handler);
     };
   });
+
   const handleInputClick = (e) => {
     setShowMenu(!showMenu);
   };
