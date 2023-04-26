@@ -6,7 +6,7 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 var session = require('express-session');
 const { promisify } = require('util');
-
+const crypto = require('crypto');
 const cors=require("cors");
 const corsOptions ={
    origin:'*', 
@@ -389,7 +389,7 @@ app.get('/unjoin',async(req,res)=>{
   try{
   const results=await query(sqlQuery, queryParams);
   const rows=await query('select * from merge where schedule_id=?',[req.query.schedule_id]);
-  console.log(rows,rows.length);
+  // console.log(rows,rows.length);
   if (rows.length === 0) {
     const schedule_id = req.query.schedule_id;
     const res1=await query(`
@@ -417,6 +417,8 @@ app.get('/createschedule',async (req,res)=>{
   // console.log('create',req.query);
   scheduleid=req.user.google_id;
   scheduleid+='_';
+  scheduleid+=req.query.startPlace;
+  scheduleid+=req.query.endPlace;
   scheduleid+=req.query.date;
   scheduleid+=req.query.time;
 //   const myDate = new Date(req.query.date);
@@ -426,6 +428,11 @@ app.get('/createschedule',async (req,res)=>{
 //   const myDateIST = myDate.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' });
 //   const mysqlDate = new Date(myDateIST).toISOString().slice(0, 19).replace('T', ' ');
 //   const myDateTime = myDate.toISOString().slice(0, 19).replace('T', ' ');
+const hash = crypto.createHash('md5').update(scheduleid).digest('hex');
+
+// Convert the hash value to a number
+const uniqueNumber = parseInt(hash, 16);
+scheduleid=uniqueNumber;
 moment.tz.setDefault('Asia/Kolkata');
 const date = req.query.date;
 const time = req.query.time;
@@ -507,7 +514,6 @@ catch(err){
 //     res.send(results);
 //   });
 // })
-<<<<<<< Updated upstream
 app.get('/dropdownlist',async(req,res)=>{
   try{
     const results=await query('select * from places;');
@@ -518,7 +524,6 @@ app.get('/dropdownlist',async(req,res)=>{
     console.log(err);
   }
 })
-=======
 
 app.get('/users', async function(req, res){
   const query1 = 'select * from users';
@@ -657,7 +662,6 @@ app.post('/newPlace', async function(req, res){
   }
 });
 
->>>>>>> Stashed changes
 module.exports = pool;
 app.use(profileRoutes)
 app.use(bodyParser.json());
@@ -674,7 +678,7 @@ app.post('/profile3', (req, res) => {
       console.log(err);
       return;
     }
-    console.log('updated');
+    // console.log('updated');
   });
   
 });

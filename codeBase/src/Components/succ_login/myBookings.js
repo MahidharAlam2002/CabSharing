@@ -32,11 +32,12 @@ function MyBooking() {
   const handleClick2 = () => {
     setOpen2(!open2);
   };
+  
     return (  <div><NavBar/><br/><div><button className="tog-cal2 itin-det-btn" onClick={handleClick}><div className="pd">
     Upcoming Booking</div> <FontAwesomeIcon icon={open ? faChevronUp : faChevronDown} />
-                    </button></div><Collapse in={open}><div className="" ><TableUI showStatus={false} showCount={false} data={current}/></div></Collapse><div><button className="tog-cal2 itin-det-btn" onClick={handleClick2}>
+                    </button></div><Collapse in={open}><div className="" ><TableUI showStatus={false} showCount={false} data={current} profileDetails={{name: '', email:'', phone: ''}}/></div></Collapse><div><button className="tog-cal2 itin-det-btn" onClick={handleClick2}>
                     <div className="pd">Past Booking</div> <FontAwesomeIcon icon={open2 ? faChevronUp : faChevronDown} />
-                    </button></div><Collapse in={open2}><div><TableUI showStatus={false} showCount={false} data={past}/></div></Collapse></div>);
+                    </button></div><Collapse in={open2}><div><TableUI showStatus={false} showCount={false} data={past} profileDetails={{name: '', email:'', phone: ''}} /></div></Collapse></div>);
 }
 
 export default MyBooking;
