@@ -1,5 +1,4 @@
 import AdminNavbar from './AdminNavbar';
-import SearchAndAddForm from "./Search";
 import { Table, Button } from 'react-bootstrap';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -31,20 +30,6 @@ function AdminSchedules() {
     }, []);
 
 
-  //   const [selectedRow, setSelectedRow] = useState(null);
-
-  // const handleButtonClick = (row) => {
-  //   setSelectedRow(row);
-
-  //   // send data to backend server
-  //   axios.post('/schedules', selectedRow)
-  //     .then((response) => {
-  //       console.log(response.data);
-  //     })
-  //     .catch((error) => {
-  //       console.error(error);
-  //     });
-  // };
 
     return ( 
     <div>
