@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import { faChevronUp,faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import { Collapse } from "react-bootstrap";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCar } from '@fortawesome/free-solid-svg-icons'
 import 'font-awesome/css/font-awesome.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -26,18 +25,38 @@ function MyBooking() {
     },[])
     const [open, setOpen] = useState(true);
     const [open2,setOpen2]=useState(true);
-  const handleClick = () => {
-    setOpen(!open);
-  };
-  const handleClick2 = () => {
-    setOpen2(!open2);
-  };
+    const handleClick = () => {
+      setOpen(!open);
+    };
+    const handleClick2 = () => {
+      setOpen2(!open2);
+    };
   
-    return (  <div><NavBar/><br/><div><button className="tog-cal2 itin-det-btn" onClick={handleClick}><div className="pd">
-    Upcoming Booking</div> <FontAwesomeIcon icon={open ? faChevronUp : faChevronDown} />
-                    </button></div><Collapse in={open}><div className="" ><TableUI showStatus={false} showCount={false} data={current} profileDetails={{name: '', email:'', phone: ''}}/></div></Collapse><div><button className="tog-cal2 itin-det-btn" onClick={handleClick2}>
-                    <div className="pd">Past Booking</div> <FontAwesomeIcon icon={open2 ? faChevronUp : faChevronDown} />
-                    </button></div><Collapse in={open2}><div><TableUI showStatus={false} showCount={false} data={past} profileDetails={{name: '', email:'', phone: ''}} /></div></Collapse></div>);
+    return (<div>
+    <NavBar/><br/>
+    <div>
+      <button className="tog-cal2 itin-det-btn" onClick={handleClick}>
+        <div className="pd">Upcoming Booking</div>
+        <FontAwesomeIcon icon={open ? faChevronUp : faChevronDown} />
+      </button>
+    </div>
+    <Collapse in={open}>
+      <div className="" >
+        <TableUI showStatus={false} showCount={false} data={current} profileDetails={{name: '', email:'', phone: ''}}/>
+      </div>
+    </Collapse>
+    <div>
+      <button className="tog-cal2 itin-det-btn" onClick={handleClick2}>
+        <div className="pd">Past Booking</div> 
+        <FontAwesomeIcon icon={open2 ? faChevronUp : faChevronDown} />
+      </button>
+    </div>
+    <Collapse in={open2}>
+    <div>
+      <TableUI showStatus={false} showCount={false} data={past} profileDetails={{name: '', email:'', phone: ''}} />
+    </div>
+    </Collapse>
+  </div>);
 }
 
 export default MyBooking;

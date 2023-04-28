@@ -1,5 +1,4 @@
 import './Tabletest.css';
-import react from'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCar } from '@fortawesome/free-solid-svg-icons'
 import 'font-awesome/css/font-awesome.min.css';
@@ -10,7 +9,7 @@ import { faChevronUp,faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import { Collapse } from "react-bootstrap";
 import moment from 'moment-timezone';
 import { Table, Button } from 'react-bootstrap';
-import axios from 'axios';
+
 const TableTest=(props)=>{
     const [open, setOpen] = useState(false);
     
@@ -23,74 +22,67 @@ const TableTest=(props)=>{
         <div className="tpd-plan">
           <div className="tp-flight-plan">
                 <div className="container-fluid" >
-                    <div className="crop depart" >
-                        <div className="context collapsed" data-toggle="collapse" data-target="#demo2">
-                       { props.showStatus && <button className="tog-cal itin-det-btn" onClick={handleClick}>
-                <FontAwesomeIcon icon={open ? faChevronUp : faChevronDown} />
-                                </button>}
-                            <div className="item it-1" onClick={handleClick}>
-                                <label className="trip-type depart">Departure</label>
-                                <div className="route-dot">
-                                    <span classNameName="point" style={{ "--data-left": "35%" }}></span>
-
-                                    <span classNameName="point" style={{ "--data-left": "65%" }}></span>
-
-                                </div>
-                                <div className="airline-image" >
-                                    {/* <div className="df-text">3 Hours</div> */}
-                                    <span className="img-wrapper">
-                                        <svg className="anime-airplane">
-                                        <FontAwesomeIcon icon={faCar} />
-                                        </svg>
-                                        {props.showStatus && <span className="top-label has-stops">{JSON.parse(props.row.listofpassengers).filter(item=>Object.keys(item).length>0).length}  Persons </span>}
-                                    </span>
-                                </div>
-
-                                <div className="port-seg">
-                                    <div className="flight-seg origin">
-                                        <div className="time">{moment.utc(props.row.date).tz('Asia/Kolkata').format('ddd, D MMMM YYYY')}</div>
-                                        <div className="port">IST</div>
-                                        <div className="name">{props.row.start_place}</div>
-                                    </div>
-                                    <div className="flight-seg destination">
-                                        <div className="time">{moment.utc(props.row.time).tz('Asia/Kolkata').format('hh:mm:ss A')}</div>
-                                        <div className="port">IST</div>
-                                        <div className="name">{props.row.end_place}</div>
-                                    </div>
-                                </div>
-                            </div>
-                          {props.showStatus &&  <div className="item it-2">
-                                <div className="dr-row">
-                                <Button onClick={()=>props.handleStatusClick(props.index)}  variant={props.row.status === 'Unjoin' ? 'danger' : 'success'}>{props.row.status}</Button>
-                                    {/* <img className="airline-logo" src="https://images.ucuzabilet.com/resources/img/flights-logo/logo25x19/25px-PC.png" /> */}
-                                </div>
-                                <div className="take-tim">{moment.utc(props.row.date).tz('Asia/Kolkata').format('ddd, D MMMM YYYY')}</div>
-                            </div>}
+                  <div className="crop depart" >
+                      <div className="context collapsed" data-toggle="collapse" data-target="#demo2">
+                        { props.showStatus && <button className="tog-cal itin-det-btn" onClick={handleClick}>
+                            <FontAwesomeIcon icon={open ? faChevronUp : faChevronDown} />
+                                  </button>}
+                        <div className="item it-1" onClick={handleClick}>
+                          <label className="trip-type depart">Departure</label>
+                          <div className="route-dot">
+                              <span classNameName="point" style={{ "--data-left": "35%" }}></span>
+                              <span classNameName="point" style={{ "--data-left": "65%" }}></span>
+                          </div>
+                          <div className="airline-image" >
+                              <span className="img-wrapper">
+                                  <svg className="anime-airplane">
+                                    <FontAwesomeIcon icon={faCar} />
+                                  </svg>
+                                  {props.showStatus && <span className="top-label has-stops">{JSON.parse(props.row.listofpassengers).filter(item=>Object.keys(item).length>0).length}  Persons </span>}
+                              </span>
+                          </div>
+                          <div className="port-seg">
+                              <div className="flight-seg origin">
+                                  <div className="time">{moment.utc(props.row.date).tz('Asia/Kolkata').format('ddd, D MMMM YYYY')}</div>
+                                  <div className="port">IST</div>
+                                  <div className="name">{props.row.start_place}</div>
+                              </div>
+                              <div className="flight-seg destination">
+                                  <div className="time">{moment.utc(props.row.time).tz('Asia/Kolkata').format('hh:mm:ss A')}</div>
+                                  <div className="port">IST</div>
+                                  <div className="name">{props.row.end_place}</div>
+                              </div>
+                          </div>
                         </div>
-                        <Collapse in={open}>
+                        {props.showStatus &&  <div className="item it-2">
+                            <div className="dr-row">
+                              <Button onClick={()=>props.handleStatusClick(props.index)}  variant={props.row.status === 'Unjoin' ? 'danger' : 'success'}>{props.row.status}</Button>
+                            </div>
+                            <div className="take-tim">{moment.utc(props.row.date).tz('Asia/Kolkata').format('ddd, D MMMM YYYY')}</div>
+                        </div>}
+                      </div>
+                      <Collapse in={open}>
                         <div id="demo2" className="fly-wrap collapse">
-                            
-
                             <div>
-                           { props.showStatus && <Table striped bordered hover >
-                    <thead>
-                      <tr>
-                        <th>S.No</th>
-                        <th>Name</th>
-                        <th>Ph.No</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {JSON.parse(props.row.listofpassengers).filter(item => !Array.isArray(item) || item.length !== 0).map((passenger,index)=>(
-                        
-                        <tr key={index+1}>
-                          <td>{index+1}</td>
-                          <td>{passenger.name}</td>
-                          <td>{passenger.phone_number}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </Table> }
+                            { props.showStatus && <Table striped bordered hover >
+                                <thead>
+                                  <tr>
+                                    <th>S.No</th>
+                                    <th>Name</th>
+                                    <th>Ph.No</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {JSON.parse(props.row.listofpassengers).filter(item => !Array.isArray(item) || item.length !== 0).map((passenger,index)=>(
+                                    
+                                    <tr key={index+1}>
+                                      <td>{index+1}</td>
+                                      <td>{passenger.name}</td>
+                                      <td>{passenger.phone_number}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </Table> }
                             </div>
 
 
@@ -98,17 +90,13 @@ const TableTest=(props)=>{
                                 <span className="sub-span">
                                     <strong>Arrives:</strong>
                                     {moment.utc(props.row.date).tz('Asia/Kolkata').format('ddd, D MMMM YYYY')}
-                                </span>
-
-                                
+                                </span>    
                             </div>
                         </div>
-                        </Collapse>
+                      </Collapse>
                     </div>
-                </div>
-                
-
-            </div>
+                  </div>
+            ` </div>
                                                                 
         </div>
         
