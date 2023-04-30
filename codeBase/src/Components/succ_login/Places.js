@@ -25,10 +25,6 @@ function Places() {
       fetchData();
     }, []);
 
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
     return ( 
     <div>
       <AdminNavbar/>

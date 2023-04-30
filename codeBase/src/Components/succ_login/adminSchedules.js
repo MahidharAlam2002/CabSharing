@@ -29,11 +29,6 @@ function AdminSchedules() {
       fetchData();
     }, []);
 
-<<<<<<< Updated upstream
-
-
-=======
->>>>>>> Stashed changes
     return ( 
     <div>
       <AdminNavbar/>
