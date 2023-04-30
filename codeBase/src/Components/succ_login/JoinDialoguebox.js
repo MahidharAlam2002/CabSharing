@@ -12,7 +12,7 @@ function JoinDialoguebox(props) {
         <div className="wrapjoin" data-pos="0">
             <div className="headbar">
                 <i className="fa-solid fa-handshake"></i> <span style={{marginLeft: '10px', marginRight: '10px'}}> {status==='Join' ? 'Joining' : 'Unjoining'} a Schedule  </span><i className="fa-solid fa-handshake"></i> 
-                <i className="closeicon zmdi zmdi-close zmdi-hc-lg" onClick={()=>props.cancelButton(index)}></i>
+                <i className="closeicon zmdi zmdi-close zmdi-hc-lg" data-testid="joinCancelBtn" onClick={()=>props.cancelButton(index)}></i>
             </div>
             <div className="headerjoin">
                 <div>
@@ -29,7 +29,7 @@ function JoinDialoguebox(props) {
                                 <span className="close"><i className="zmdi zmdi-close"></i></span>
                                 <div>
                                     <h6>Name</h6>
-                                    <span className="airport-name" data-role="from">{profileDetails.name}</span>
+                                    <span className="airport-name" data-role="from" data-testid='profilenamejoinDB'>{profileDetails.name}</span>
                                 </div>			
                             </div>
                         </div>
@@ -74,7 +74,7 @@ function JoinDialoguebox(props) {
                             </div>
                         </div>
                         <div className="controljoin">
-                            <button type='button' style={{color: '#1C1D21'}}  onClick={()=>props.confirmButton(status, index)}><strong>Confirm</strong></button>
+                            <button type='button' style={{color: '#1C1D21'}} data-testid="joinConfirmBtn"  onClick={()=>props.confirmButton(status, index)}><strong>Confirm</strong></button>
                         </div>
 
                     </div>

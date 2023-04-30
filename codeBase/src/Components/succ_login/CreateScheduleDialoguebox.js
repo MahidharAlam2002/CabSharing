@@ -18,8 +18,10 @@ function CreateScheduleDialoguebox(props) {
       });
 	const [errormsg,seterrormsg]=useState('')
     const confirmButton=async()=>{
+		// console.log(scheduleDetails);
 		try
 		{
+			
 			if(scheduleDetails.startPlace===null || scheduleDetails.endPlace===null || scheduleDetails.date==='' || scheduleDetails.time==='')
 			{
 				seterrormsg("*All the fields are mandatory");
@@ -30,7 +32,15 @@ function CreateScheduleDialoguebox(props) {
 				seterrormsg("*Start Place and End Place cannot be same ");
 				return;
 			}
+			const elemdate=new Date(scheduleDetails.date+' '+scheduleDetails.time);
+			const currentDate=new Date();
+			if( elemdate<currentDate)
+			{
+				seterrormsg("*Past Booking cannot be done ");
+				return;
+			}
 			const res= await axios.get('/createschedule',{params:scheduleDetails});
+			// console.log("printing data2",res);
 			if(res.data.code==='ER_DUP_ENTRY')
 			{
 				seterrormsg('You have already created same schedule');
@@ -39,6 +49,7 @@ function CreateScheduleDialoguebox(props) {
 		}
 		catch(err)
 		{
+			console.log("printing data",err);
 			seterrormsg("fill all details");
 			console.log(err);
 			return;
@@ -65,7 +76,7 @@ function CreateScheduleDialoguebox(props) {
         <div className="wrapschedule" data-pos="0">
 			<div className="headbar">
 				<i className="fa-solid fa-handshake"></i> <span style={{marginLeft: '10px', marginRight: '10px'}}> Creating a Schedule  </span><i className="fa-solid fa-handshake"></i> 
-				<i className="closeicon zmdi zmdi-close zmdi-hc-lg" onClick={()=>cancelButton()}></i>
+				<i className="closeicon zmdi zmdi-close zmdi-hc-lg"  data-testid="CancelBtnCSDB" onClick={()=>cancelButton()}></i>
 			</div>
 			<div className="headerschedule">
 					<div>
@@ -103,7 +114,7 @@ function CreateScheduleDialoguebox(props) {
 									<span className="close"><i className="zmdi zmdi-close"></i></span>
 									<div >
 										<span className="airport-name" data-role="from" >
-										<div>
+										<div data-testid="FromDropDownCSDB">
 											<Dropdown
 												isSearchable={true}
 												isMulti={false}
@@ -123,7 +134,7 @@ function CreateScheduleDialoguebox(props) {
 									<span className="close"><i className="zmdi zmdi-close"></i></span>
 									<div >
 										<span className="airport-name" data-role="from" >
-										<div>
+										<div data-testid="ToDropDownCSDB">
 											<Dropdown
 												isSearchable={true}
 												isMulti={false}
@@ -154,6 +165,7 @@ function CreateScheduleDialoguebox(props) {
 											onChange={handlescheduledetails}
 											style={{ padding: '10px 16px', borderRadius: 8, outline: 'none', border: 'none', marginRight: 8, width: 200 }}
 											required
+											data-testid="inputdateCSDB"
 										/>
 										</span>
 									</div>
@@ -174,6 +186,7 @@ function CreateScheduleDialoguebox(props) {
 											onChange={handlescheduledetails}
 											style={{ padding: '10px 16px', borderRadius: 8, outline: 'none', border: 'none', marginRight: 8, width: 200 }}
 											required
+											data-testid='inputtimeCSDB'
 										/>
 										</span>
 									</div>
@@ -182,7 +195,7 @@ function CreateScheduleDialoguebox(props) {
 						</div>
 						<div style={{display:'flex', justifyContent: 'center', color: 'red'}}>{errormsg}</div>
 						<div className="controlschedule">
-							<button type='submit' className="btnSearch" style={{color: '#1C1D21'}} onClick={()=>confirmButton(scheduleDetails)}><strong>Confirm</strong></button>
+							<button data-testid="ConfirmBtnCSDB" type='submit' className="btnSearch" style={{color: '#1C1D21'}} onClick={()=>confirmButton(scheduleDetails)}><strong>Confirm</strong></button>
 						</div>
 					</div>
 				</section>

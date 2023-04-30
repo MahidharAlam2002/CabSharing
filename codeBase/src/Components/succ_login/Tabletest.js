@@ -16,7 +16,7 @@ const TableTest=(props)=>{
   const handleClick = () => {
     setOpen(!open);
   };
-  
+  // console.log(props);
     return (
         <div className="section2">
         <div className="tpd-plan">
@@ -24,14 +24,14 @@ const TableTest=(props)=>{
                 <div className="container-fluid" >
                   <div className="crop depart" >
                       <div className="context collapsed" data-toggle="collapse" data-target="#demo2">
-                        { props.showStatus && <button className="tog-cal itin-det-btn" onClick={handleClick}>
+                        { props.showStatus && <button data-testid="btnTableTestUpDown" className="tog-cal itin-det-btn" onClick={handleClick}>
                             <FontAwesomeIcon icon={open ? faChevronUp : faChevronDown} />
                                   </button>}
-                        <div className="item it-1" onClick={handleClick}>
+                        <div className="item it-1" onClick={handleClick} data-testid="divRowData">
                           <label className="trip-type depart">Departure</label>
                           <div className="route-dot">
-                              <span classNameName="point" style={{ "--data-left": "35%" }}></span>
-                              <span classNameName="point" style={{ "--data-left": "65%" }}></span>
+                              <span className="point" style={{ "--data-left": "35%" }}></span>
+                              <span className="point" style={{ "--data-left": "65%" }}></span>
                           </div>
                           <div className="airline-image" >
                               <span className="img-wrapper">
@@ -56,7 +56,7 @@ const TableTest=(props)=>{
                         </div>
                         {props.showStatus &&  <div className="item it-2">
                             <div className="dr-row">
-                              <Button onClick={()=>props.handleStatusClick(props.index)}  variant={props.row.status === 'Unjoin' ? 'danger' : 'success'}>{props.row.status}</Button>
+                              <Button data-testid="btnJoinTabletest" onClick={()=>props.handleStatusClick(props.index)}  variant={props.row.status === 'Unjoin' ? 'danger' : 'success'}>{props.row.status}</Button>
                             </div>
                             <div className="take-tim">{moment.utc(props.row.date).tz('Asia/Kolkata').format('ddd, D MMMM YYYY')}</div>
                         </div>}
@@ -64,7 +64,7 @@ const TableTest=(props)=>{
                       <Collapse in={open}>
                         <div id="demo2" className="fly-wrap collapse">
                             <div>
-                            { props.showStatus && <Table striped bordered hover >
+                            { props.showStatus && <Table data-testid="TablePassengersTestTable" striped bordered hover >
                                 <thead>
                                   <tr>
                                     <th>S.No</th>
@@ -72,10 +72,10 @@ const TableTest=(props)=>{
                                     <th>Ph.No</th>
                                   </tr>
                                 </thead>
-                                <tbody>
+                                <tbody >
                                   {JSON.parse(props.row.listofpassengers).filter(item => !Array.isArray(item) || item.length !== 0).map((passenger,index)=>(
                                     
-                                    <tr key={index+1}>
+                                    <tr key={index+1} data-testid='listpassTableTest'>
                                       <td>{index+1}</td>
                                       <td>{passenger.name}</td>
                                       <td>{passenger.phone_number}</td>
