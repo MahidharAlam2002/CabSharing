@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require("body-parser");
 const mysql = require('mysql');
@@ -22,7 +23,7 @@ app.use(bodyParser.json());
 
 
 app.use(session({
-  secret: "Our little secret",
+  secret: process.env.SECRET,
   resave: false,
   saveUninitialized: false
 }));
@@ -30,11 +31,11 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 const pool = mysql.createPool({
-  host: 'cabsharing.mysql.database.azure.com',
-  user: 'RITHVIK',
-  password: 'Kondapalkala@%2002',
-  database: 'cabsharingdb',
-  port: 3306,
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB,
+  port: process.env.DB_PORT,
   ssl:true
 });
 const query = promisify(pool.query).bind(pool);
@@ -51,9 +52,9 @@ passport.deserializeUser((id, done) => {
 });
 
 passport.use(new GoogleStrategy({
-  clientID:'227071007756-rivh29c65qeg6n2ai2ov5rbda764ouec.apps.googleusercontent.com',
-  clientSecret:'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',
-  callbackURL: "http://localhost:8080/auth/google/home",
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: process.env.CALL_BACK_URL,
   scope: ['profile', 'email']
 },
 async (accessToken, refreshToken, profile, done) => {
@@ -82,26 +83,8 @@ async (accessToken, refreshToken, profile, done) => {
 
 
 app.get('/', (req, res) => {
-  res.redirect("http://localhost:3000/");
+  res.redirect(process.env.FRONT_END);
 });
-
-app.get('/profile', (req, res) => {
-  if (req.isAuthenticated()) {
-    
-    res.redirect('http://localhost:3000/profile');
-  } else {
-    res.redirect('http://localhost:3000');
-  }
-});
-
-app.get('/home', (req, res) => {
-  res.redirect('http://localhost:3000/home');
-});
-
-app.get('/user', (req, res) => {
-  res.redirect('http://localhost:3000/home');
-});
-
 
 
 app.get('/auth/google',
@@ -112,10 +95,10 @@ app.get('/auth/google/home',
   function (req, res){
     
     if(req.user.google_id==='110671206414098862281' || req.user.google_id==='104607823624198558021' || req.user.google_id==='112766095813271316268' || req.user.google_id==='117191595535130300633'){
-      res.redirect('http://localhost:3000/users');
+      res.redirect(process.env.FRONT_END + 'users');
     }
     else{
-      res.redirect('http://localhost:3000/home');
+      res.redirect(process.env.FRONT_END + 'home');
     }
   }
 );
@@ -124,7 +107,7 @@ app.get('/api/authenticate',(req,res)=>{
 })
 app.get('/logout',(req,res)=>{
   req.logout((err)=>{
-    res.redirect('http://localhost:3000/');
+    res.redirect(process.env.FRONT_END);
   })
 })
 
@@ -472,7 +455,7 @@ app.post('/newPlace', async function(req, res){
   const queryParam = [newValue];
   try {
     const results = await query(query1, queryParam);
-    res.redirect('http://localhost:3000/places');
+    res.redirect(process.env.FRONT_END+'places');
   }
 
   catch(err) {
@@ -510,7 +493,11 @@ app.get('/profile2', (req, res) => {
   })
 });
 
-app.listen(8080, () => {
-  console.log('Server started on port 8080');
-});
 
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(8080, () => {
+    console.log('Server started on port 8080');
+  });
+}
+
+module.exports = app;

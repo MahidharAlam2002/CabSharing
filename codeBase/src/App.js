@@ -9,6 +9,7 @@ import AdminUsers from './Components/succ_login/adminUsers';
 import AdminSchedules from './Components/succ_login/adminSchedules';
 import Places from './Components/succ_login/Places';
 import AdminRoute from './AdminRoute';
+import AdminProfile from './Components/succ_login/AdminProfile';
 
 function App() {
   return (
@@ -44,7 +45,7 @@ function App() {
             </Route>
 
             <Route exact path='/admin/profile' element={<AdminRoute/>}>
-              <Route exact path='/admin/profile' element={<Profile/>}/>
+              <Route exact path='/admin/profile' element={<AdminProfile/>}/>
             </Route>
 
           </Routes>
