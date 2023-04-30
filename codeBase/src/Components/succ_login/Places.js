@@ -19,13 +19,16 @@ function Places() {
         }
         else
         {
-          console.log("users data not retrieved yet.")
+          console.log("places data not retrieved yet.")
         }
       }
       fetchData();
     }, []);
 
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
     return ( 
     <div>
       <AdminNavbar/>
@@ -50,7 +53,7 @@ function Places() {
                     }
                     else
                     {
-                      console.log("schedule data not sent yet.")
+                      console.log("place data not sent yet.")
                     }
                   }
                   sendData();

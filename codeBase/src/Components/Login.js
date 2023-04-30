@@ -36,7 +36,7 @@ function Login() {
 
                 <Row style={{paddingTop:"1vh",paddingBottom:'2vh'}}>
                     <Col style={{textAlign:'center'}}>
-                        <Button variant="outline-primary" type="submit" href='http://localhost:8080/auth/google/home' onClick={function (){sessionStorage.setItem('sometoken','loggedin');}}>
+                        <Button variant="outline-primary" type="submit" href='http://localhost:8080/auth/google/home'>
                             Sign In With IITH Google Account
                         </Button>
                     </Col>

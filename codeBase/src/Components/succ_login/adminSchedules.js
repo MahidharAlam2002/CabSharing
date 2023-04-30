@@ -23,14 +23,17 @@ function AdminSchedules() {
         }
         else
         {
-          console.log("users data not retrieved yet.")
+          console.log("schedules data not retrieved yet.")
         }
       }
       fetchData();
     }, []);
 
+<<<<<<< Updated upstream
 
 
+=======
+>>>>>>> Stashed changes
     return ( 
     <div>
       <AdminNavbar/>
