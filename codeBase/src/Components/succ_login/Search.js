@@ -38,7 +38,7 @@ function SearchAndAddForm() {
     setLoadTable(true);
     try{
     const res=await axios.get('/search',{params:formData});
-    
+
     setresponse(res.data);
     }
     catch(err)
@@ -130,9 +130,9 @@ function SearchAndAddForm() {
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center', backgroundImage:'url("https://lh3.googleusercontent.com/p/AF1QipMttxVTtnaZBUARGuyX6Tk6x6nCNbqng9VJyClc=s1360-w1360-h1020")', backgroundRepeat: 'no-repeat', backgroundSize: 'cover', height: '20%',paddingBottom:'100px',paddingTop:'100Px'}}>
-        <AiOutlineSearch onClick={handleSearch} size={42} style={{ marginRight: 8, cursor: 'pointer' }} />
+        <AiOutlineSearch data-testid="searchiconcheck" onClick={handleSearch} size={42} style={{ marginRight: 8, cursor: 'pointer' }} />
         
-        <div><Dropdown
+        <div data-testid="valuelistcheck"><Dropdown
           isSearchable={true}
           isMulti={true}
           placeHolder="Start Place"
@@ -151,6 +151,7 @@ function SearchAndAddForm() {
         />
         </div>
         <input
+          data-testid="handleinputchangecheck"
           type="date"
           id="date"
           name="date"
@@ -170,7 +171,7 @@ function SearchAndAddForm() {
           style={{ padding: '10px 16px', borderRadius: 8, outline: 'none', border: 'none', marginRight: 8, width: 150 }}
         />
 
-        <IoIosAddCircle onClick={handleAdd} size={42} style={{ cursor: 'pointer' }} />
+        <IoIosAddCircle data-testid="addiconcheck" onClick={handleAdd} size={42} style={{ cursor: 'pointer' }} />
         <div id="createschedule" style={{display: "none", width: '100%', height: '100%', backgroundColor: 'rgb(0,0,0,0.4)', position: 'fixed', zIndex: 1, left: 0, top: 0, overflow: 'auto'}}>
           <CreateScheduleDialoguebox cancelButton={cancelButton} reloadButton={reloadButton} options={options} Valuelist={Valuelist} profileDetails={profileDetails}/>
         </div>

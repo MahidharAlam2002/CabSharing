@@ -55,6 +55,13 @@ const Dropdown = ({
       setShowMenu(!showMenu);
     };
 
+    const onTagRemove = (e, option) => {
+      e.stopPropagation();
+      const newValue = removeOption(option);
+      setSelectedValue(newValue);
+      onChange(newValue);
+    };
+
     const getDisplay = () => {
       if (!selectedValue || selectedValue.length === 0) {
         return placeHolder;
@@ -65,7 +72,7 @@ const Dropdown = ({
             {selectedValue.map((option) => (
               <div key={option.value} className="dropdown-tag-item">
                 {option.label}
-                <span
+                <span data-testid="ontagremovecheck"
                   onClick={(e) => onTagRemove(e, option)}
                   className="dropdown-tag-close"
                 >
@@ -83,12 +90,7 @@ const Dropdown = ({
       return selectedValue.filter((o) => o.value !== option.value);
     };
 
-  const onTagRemove = (e, option) => {
-    e.stopPropagation();
-    const newValue = removeOption(option);
-    setSelectedValue(newValue);
-    onChange(newValue);
-  };
+  
 
   const onItemClick = (option) => {
     let newValue;
@@ -102,6 +104,7 @@ const Dropdown = ({
       newValue = option;
     }
     setSelectedValue(newValue);
+    
     onChange(newValue);
   };
 
@@ -113,7 +116,6 @@ const Dropdown = ({
     if (!selectedValue) {
       return false;
     }
-
     return selectedValue.value === option.value;
   };
 
@@ -134,23 +136,23 @@ const Dropdown = ({
 
   return (
     <div className="dropdown-container">
-      <div ref={inputRef} onClick={handleInputClick} className="dropdown-input">
+      <div ref={inputRef} onClick={handleInputClick} data-testid="handleinputclickcheck" className="dropdown-input">
         <div className="dropdown-selected-value">{getDisplay()}</div>
         <div className="dropdown-tools">
-          <div className="dropdown-tool">
+          <div className="dropdown-tool" data-testid="iconcheck">
             <Icon />
           </div>
         </div>
       </div>
       {showMenu && (
-        <div>
+        <div data-testid="menucheck">
           {isSearchable && (
-            <div className="search-box">
-              <input onChange={onSearch} value={searchValue} ref={searchRef} />
+            <div className="search-box" >
+              <input data-testid="searchboxcheck" onChange={onSearch} value={searchValue} ref={searchRef} />
             </div>
           )}
           {getOptions().map((option) => (
-            <div
+            <div data-testid="onitemclickcheck"
               onClick={() => onItemClick(option)}
               key={option.value}
               className={`dropdown-item ${isSelected(option) && "selected"}`}
