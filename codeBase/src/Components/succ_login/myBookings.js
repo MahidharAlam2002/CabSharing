@@ -35,25 +35,25 @@ function MyBooking() {
     return (<div>
     <NavBar/><br/>
     <div>
-      <button className="tog-cal2 itin-det-btn" onClick={handleClick}>
+      <button data-testid='btnUpcomingBooking' className="tog-cal2 itin-det-btn" onClick={handleClick}>
         <div className="pd">Upcoming Booking</div>
         <FontAwesomeIcon icon={open ? faChevronUp : faChevronDown} />
       </button>
     </div>
     <Collapse in={open}>
       <div className="" >
-        <TableUI showStatus={false} showCount={false} data={current} profileDetails={{name: '', email:'', phone: ''}}/>
+        <TableUI data-testid="TbUB" showStatus={false} showCount={false} data={current} profileDetails={{name: '', email:'', phone: ''}}/>
       </div>
     </Collapse>
     <div>
-      <button className="tog-cal2 itin-det-btn" onClick={handleClick2}>
+      <button data-testid='btnPastBooking' className="tog-cal2 itin-det-btn" onClick={handleClick2}>
         <div className="pd">Past Booking</div> 
-        <FontAwesomeIcon icon={open2 ? faChevronUp : faChevronDown} />
+        <FontAwesomeIcon data-testid="TbPB" icon={open2 ? faChevronUp : faChevronDown} />
       </button>
     </div>
     <Collapse in={open2}>
     <div>
-      <TableUI showStatus={false} showCount={false} data={past} profileDetails={{name: '', email:'', phone: ''}} />
+      <TableUI data-testid="TbPB" showStatus={false} showCount={false} data={past} profileDetails={{name: '', email:'', phone: ''}} />
     </div>
     </Collapse>
   </div>);

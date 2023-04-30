@@ -14,18 +14,22 @@ function TableUI(props) {
   const [LoadTable,setLoadTable]=useState(true);
   const profileDetails=props.profileDetails;
   const [rerender,setrerender]=useState(false);
+  // const [showJoin,setshowJoin]=useState(false);
   const handleStatusClick = (index) => {
     document.getElementById(index+"join").style.display="block";
+    // setshowJoin(true);
   };
   
   
 
   const cancelButton=(index)=>{
     document.getElementById(index+"join").style.display="none";
+    // setshowJoin(false);
   };
-
+  
   const confirmButton=async(status, index)=>{
     const newData=[...data];
+    document.getElementById(index+"join").style.display="none";
     setLoadTable(true);
     if(status==="Join")
     {
@@ -47,16 +51,19 @@ function TableUI(props) {
       setrerender(true);
       data[index].status="Join";
     }
+    
     setData(newData);
     setLoadTable(false);
-    document.getElementById(index+"join").style.display="none";
     
+    
+    // setshowJoin(false);
+   
   };
   useEffect(()=>{
     
     if(props.data)
      { 
-      
+      // console.log(props.data);
       setData(props.data)
       setLoadTable(false);
     }
@@ -64,16 +71,17 @@ function TableUI(props) {
   },[props.data,rerender])
   const showStatus=props.showStatus;
   const showCount=props.showCount;
+  // console.log(props);
   return (
     <div className="container">
       
-      <Table>
+      <Table data-testid="TableTableUI">
         <tbody>
           {LoadTable? <div><Loading/></div>:data.map((row, index) => (
             <tr key={row.schedule_id}>
               <TableTest row={row} handleStatusClick={handleStatusClick} index={index} showCount={showCount} showStatus={showStatus}/>
-              { <div>
-                  <div id={index+"join"} style={{display: "none", width: '100%', height: '100%', backgroundColor: 'rgb(0,0,0,0.4)', position: 'fixed', zIndex: 1, left: 0, top: 0, overflow: 'auto'}}>
+              {  <div>
+                  <div data-testid="indexjoin" id={index+"join"} style={{display: "none", width: '100%', height: '100%', backgroundColor: 'rgb(0,0,0,0.4)', position: 'fixed', zIndex: 1, left: 0, top: 0, overflow: 'auto'}}>
                     <JoinDialoguebox profileDetails={profileDetails} row={row} index={index} status={row.status} confirmButton={confirmButton} cancelButton={cancelButton} />
                   </div>
                 
