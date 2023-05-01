@@ -82,3 +82,12 @@
   .table td {
     font-size: 16px;
   }
+
+  .searchbarwithoutaddicon{
+    margin-left: 5vh;
+    /* border: solid 5px black; */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
