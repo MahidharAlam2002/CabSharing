@@ -38,7 +38,7 @@ function SearchAndAddForm() {
     setLoadTable(true);
     try{
     const res=await axios.get('/search',{params:formData});
-
+      console.log(res);
     setresponse(res.data);
     }
     catch(err)
@@ -75,24 +75,26 @@ function SearchAndAddForm() {
     
       try{
       const res=await axios.get('/dropdownlist');
-     
-      const t=res.data.map((row,index)=>{
+      console.log(res);
+      const t= res.data.map((row,index)=>{
         
         return {value:row.place_name,label:row.place_name}
       })
-     
+      console.log(t)
       setOptions(t);
       }
       catch(err)
       {
-       
+        console.log(options)
         console.log(err);
       }
     }
     FetchOptions();
+    
   },[])
   
   const Valuelist=(jsonList)=>{
+    console.log(`line 1245${jsonList["value"]}`)
     const values=[]
     if(jsonList["value"]!==undefined)
     {
@@ -115,7 +117,7 @@ function SearchAndAddForm() {
     {
       try{
         const results= await axios.get('/profile2');
-      
+      console.log(results);
         setProfileDetails(results.data);
       
       }catch(err)
@@ -130,8 +132,9 @@ function SearchAndAddForm() {
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'center', backgroundImage:'url("https://lh3.googleusercontent.com/p/AF1QipMttxVTtnaZBUARGuyX6Tk6x6nCNbqng9VJyClc=s1360-w1360-h1020")', backgroundRepeat: 'no-repeat', backgroundSize: 'cover', height: '20%',paddingBottom:'100px',paddingTop:'100Px'}}>
-        <AiOutlineSearch data-testid="searchiconcheck" onClick={handleSearch} size={42} style={{ marginRight: 8, cursor: 'pointer' }} />
-        
+        {/* <AiOutlineSearch data-testid="searchiconcheck" onClick={handleSearch} size={42} style={{ marginRight: 8, cursor: 'pointer' }} /> */}
+        <IoIosAddCircle data-testid="addiconcheck" onClick={handleAdd} size={42} style={{ cursor: 'pointer' }} />
+        <div className='searchbarwithoutaddicon'>
         <div data-testid="valuelistcheck"><Dropdown
           isSearchable={true}
           isMulti={true}
@@ -170,8 +173,9 @@ function SearchAndAddForm() {
           onChange={handleInputChange}
           style={{ padding: '10px 16px', borderRadius: 8, outline: 'none', border: 'none', marginRight: 8, width: 150 }}
         />
-
-        <IoIosAddCircle data-testid="addiconcheck" onClick={handleAdd} size={42} style={{ cursor: 'pointer' }} />
+        <AiOutlineSearch data-testid="searchiconcheck" onClick={handleSearch} size={42} style={{ marginRight: 8, cursor: 'pointer' }} />
+        {/* <IoIosAddCircle data-testid="addiconcheck" onClick={handleAdd} size={42} style={{ cursor: 'pointer' }} /> */}
+        </div>
         <div id="createschedule" style={{display: "none", width: '100%', height: '100%', backgroundColor: 'rgb(0,0,0,0.4)', position: 'fixed', zIndex: 1, left: 0, top: 0, overflow: 'auto'}}>
           <CreateScheduleDialoguebox cancelButton={cancelButton} reloadButton={reloadButton} options={options} Valuelist={Valuelist} profileDetails={profileDetails}/>
         </div>
@@ -185,3 +189,5 @@ function SearchAndAddForm() {
 }
 
 export default SearchAndAddForm;
+
+// "test": "react-scripts test --watchAll --coverage",
