@@ -13,7 +13,7 @@ Download/Clone the repo.
 ### BACK_END:
 
 1. Go to 'backend' folder and run 'npm i', it installs all the dependencies to your folder.
-2. Next run 'npm run dev', which runs the front-end on PORT 8080, localhost.
+2. Next run 'npm run dev', which runs the back-end on PORT 8080, localhost.
 
 
 ### TESTING
